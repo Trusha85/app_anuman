@@ -1,0 +1,33 @@
+package com.appanuman.model
+
+data class AppRiskProfile(
+    val packageName: String,
+    val appName: String,
+    val versionName: String,
+    val versionCode: Long,
+    val firstInstallTime: Long,
+    val lastUpdateTime: Long,
+    val targetSdkVersion: Int,
+    val isSystemApp: Boolean,
+    val trustLevel: TrustLevel,
+    val installerPackageName: String?,
+    val riskScore: Int,
+    val riskBand: RiskBand = RiskBand.fromScore(riskScore),
+    val categoryStatuses: Map<PermissionCategory, CategoryStatus>,
+    val categoryPermissions: Map<PermissionCategory, List<String>> = emptyMap(),
+    val declaredPermissions: List<String> = emptyList(),
+    val grantedPermissions: List<String> = emptyList(),
+    val waterfall: List<ScoringFinding> = emptyList(),
+    val threatNarratives: List<ThreatNarrative> = emptyList(),
+    val whyFlagged: List<String> = emptyList(),
+    val whyFlagged_hi: List<String> = emptyList(),
+    val contextMismatch: Boolean = false,
+    val mismatchSeverity: String? = null,
+    val permissionCreepFlag: Boolean = false,
+    val addedPermissions: List<String> = emptyList(),
+    val isDormant: Boolean = false,
+    val daysUnused: Int = 0,
+    val dangerScore: Int = 0,
+    val isRemoteAccessApp: Boolean = false,
+    val specialAccessCoverage: Map<String, SpecialAccessState> = emptyMap()
+)

@@ -1,8 +1,6 @@
 package com.appanuman.ui.screens
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
@@ -14,372 +12,335 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.appanuman.R
-import com.appanuman.data.model.AppRiskProfile
-import com.appanuman.data.model.Language
-import com.appanuman.data.model.UserMode
+import com.appanuman.model.*
+import com.appanuman.ui.components.*
+import com.appanuman.ui.theme.LocalRiskColors
+import java.text.SimpleDateFormat
+import java.util.*
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreen(
-    apps: List<AppRiskProfile>,
-    isScanning: Boolean,
-    scanDuration: Float,
-    deviceGrade: String,
-    deviceScore: Int,
     userMode: UserMode,
     language: Language,
-    onScanClick: () -> Unit,
-    onQuestionClick: (String) -> Unit,
-    onPanicClick: () -> Unit,
-    onDormantClick: () -> Unit,
-    onShareClick: () -> Unit,
-    onPrivacyClick: () -> Unit,
-    onAllAppsClick: () -> Unit,
-    onLanguageToggle: () -> Unit,
-    onModeChange: (UserMode) -> Unit
+    deviceSummary: DeviceRiskSummary,
+    scanState: ScanState,
+    onScanNow: () -> Unit,
+    onNavigateToQuestionList: (String) -> Unit,
+    onNavigateToPanic: () -> Unit,
+    onSelectMode: (UserMode) -> Unit,
+    onToggleLanguage: () -> Unit,
+    modifier: Modifier = Modifier
 ) {
-    var showModeDialog by remember { mutableStateOf(false) }
+    var showModeSheet by remember { mutableStateOf(false) }
+    val riskColors = LocalRiskColors.current
 
-    val gradeColor = when (deviceGrade) {
-        "A" -> Color(0xFF2E7D32)
-        "B" -> Color(0xFF558B2F)
-        "C" -> Color(0xFFF57F17)
-        "D" -> Color(0xFFE65100)
-        else -> Color(0xFFC62828)
+    if (showModeSheet) {
+        ModeSelectorBottomSheet(
+            currentMode = userMode,
+            onModeSelected = onSelectMode,
+            onDismiss = { showModeSheet = false }
+        )
     }
 
     Scaffold(
         topBar = {
-            TopAppBar(
-                title = {
-                    Text(
-                        text = stringResource(id = R.string.app_name),
-                        fontSize = 24.sp,
-                        fontWeight = FontWeight.ExtraBold,
-                        color = Color.White
-                    )
-                },
-                actions = {
-                    // Language Toggle
-                    TextButton(onClick = onLanguageToggle) {
-                        Text(
-                            text = if (language == Language.EN) "हिं" else "EN",
-                            fontSize = 18.sp,
-                            fontWeight = FontWeight.Bold,
-                            color = Color(0xFF90CAF9)
-                        )
-                    }
-
-                    // Mode Selector Icon
-                    IconButton(onClick = { showModeDialog = true }) {
-                        Icon(
-                            imageVector = Icons.Default.Tune,
-                            contentDescription = "User Mode",
-                            tint = Color.White
-                        )
-                    }
-
-                    // Privacy Shield Icon
-                    IconButton(onClick = onPrivacyClick) {
-                        Icon(
-                            imageVector = Icons.Default.Shield,
-                            contentDescription = "Privacy & Security",
-                            tint = Color(0xFF81C784)
-                        )
-                    }
-                },
-                colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = Color(0xFF1A1A1A)
-                )
+            AppTopBar(
+                title = null,
+                showBackButton = false,
+                showModeSelector = true,
+                currentLanguage = language,
+                userMode = userMode,
+                onModeClick = { showModeSheet = true },
+                onLanguageToggle = onToggleLanguage
             )
         },
-        containerColor = Color(0xFF1A1A1A)
-    ) { padding ->
-        if (showModeDialog) {
-            AlertDialog(
-                onDismissRequest = { showModeDialog = false },
-                title = { Text(text = "Select Mode") },
-                text = {
-                    Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                        ListItem(
-                            headlineContent = { Text(stringResource(id = R.string.mode_simple)) },
-                            leadingContent = { RadioButton(selected = userMode == UserMode.SIMPLE, onClick = null) },
-                            modifier = Modifier.clickable {
-                                onModeChange(UserMode.SIMPLE)
-                                showModeDialog = false
-                            }
-                        )
-                        ListItem(
-                            headlineContent = { Text(stringResource(id = R.string.mode_detailed)) },
-                            leadingContent = { RadioButton(selected = userMode == UserMode.DETAILED, onClick = null) },
-                            modifier = Modifier.clickable {
-                                onModeChange(UserMode.DETAILED)
-                                showModeDialog = false
-                            }
-                        )
-                        ListItem(
-                            headlineContent = { Text(stringResource(id = R.string.mode_grandparent)) },
-                            leadingContent = { RadioButton(selected = userMode == UserMode.GRANDPARENT, onClick = null) },
-                            modifier = Modifier.clickable {
-                                onModeChange(UserMode.GRANDPARENT)
-                                showModeDialog = false
-                            }
-                        )
-                    }
-                },
-                confirmButton = {
-                    TextButton(onClick = { showModeDialog = false }) {
-                        Text("Close")
-                    }
-                }
-            )
-        }
-
+        bottomBar = {
+            // Panic button is always visible at the bottom of the screen
+            Surface(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp, vertical = 8.dp),
+                color = Color.Transparent
+            ) {
+                PanicButton(
+                    onClick = onNavigateToPanic,
+                    userMode = userMode
+                )
+            }
+        },
+        containerColor = MaterialTheme.colorScheme.background,
+        modifier = modifier
+    ) { innerPadding ->
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(padding)
-                .padding(horizontal = 20.dp)
-                .verticalScroll(rememberScrollState()),
-            verticalArrangement = Arrangement.spacedBy(16.dp)
+                .padding(innerPadding)
+                .verticalScroll(rememberScrollState())
+                .padding(horizontal = 16.dp, vertical = 8.dp),
+            verticalArrangement = Arrangement.spacedBy(16.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Spacer(modifier = Modifier.height(4.dp))
-
-            // GRANDPARENT MODE
             if (userMode == UserMode.GRANDPARENT) {
-                Card(
-                    modifier = Modifier.fillMaxWidth(),
-                    shape = RoundedCornerShape(20.dp),
-                    colors = CardDefaults.cardColors(containerColor = gradeColor)
-                ) {
-                    Column(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(28.dp),
-                        horizontalAlignment = Alignment.CenterHorizontally,
-                        verticalArrangement = Arrangement.spacedBy(14.dp)
-                    ) {
-                        Text(
-                            text = if (deviceScore <= 20)
-                                stringResource(id = R.string.grandparent_safe)
-                            else if (deviceScore <= 40)
-                                stringResource(id = R.string.grandparent_check)
-                            else if (deviceScore <= 60)
-                                stringResource(id = R.string.grandparent_attention)
-                            else
-                                stringResource(id = R.string.grandparent_danger),
-                            fontSize = 24.sp,
-                            fontWeight = FontWeight.Bold,
-                            color = Color.White
-                        )
-
-                        Text(
-                            text = if (deviceScore <= 20) "✅" else "⚠️",
-                            fontSize = 64.sp
-                        )
-                    }
-                }
+                // GRANDPARENT MODE VARIANT
+                GrandparentHomeContent(
+                    deviceSummary = deviceSummary,
+                    scanState = scanState,
+                    onScanNow = onScanNow
+                )
             } else {
-                // NORMAL QUESTION-FIRST DESIGN (3 Question Cards)
+                // SIMPLE & DETAILED MODE: Question-First Design
+                Text(
+                    text = stringResource(id = R.string.home_device_grade_title),
+                    style = MaterialTheme.typography.titleLarge,
+                    color = MaterialTheme.colorScheme.onBackground,
+                    modifier = Modifier.fillMaxWidth()
+                )
+
+                // Question Cards
                 QuestionCard(
-                    question = stringResource(id = R.string.question_otp),
-                    icon = "✉️",
-                    onClick = { onQuestionClick("OTP") }
+                    title = stringResource(id = R.string.home_question_otp_title),
+                    subtitle = stringResource(id = R.string.home_question_otp_subtitle, deviceSummary.otpStealerCount),
+                    icon = Icons.Default.Sms,
+                    userMode = userMode,
+                    onClick = { onNavigateToQuestionList("question_otp") }
                 )
 
                 QuestionCard(
-                    question = stringResource(id = R.string.question_watch),
-                    icon = "👁️",
-                    onClick = { onQuestionClick("WATCH") }
+                    title = stringResource(id = R.string.home_question_background_title),
+                    subtitle = stringResource(id = R.string.home_question_background_subtitle, deviceSummary.backgroundSpyCount),
+                    icon = Icons.Default.Visibility,
+                    userMode = userMode,
+                    onClick = { onNavigateToQuestionList("question_background") }
                 )
 
                 QuestionCard(
-                    question = stringResource(id = R.string.question_control),
-                    icon = "📱",
-                    onClick = { onQuestionClick("CONTROL") }
+                    title = stringResource(id = R.string.home_question_screen_title),
+                    subtitle = stringResource(id = R.string.home_question_screen_subtitle, deviceSummary.screenControlCount),
+                    icon = Icons.Default.TouchApp,
+                    userMode = userMode,
+                    onClick = { onNavigateToQuestionList("question_screen") }
                 )
 
                 // Device Risk Gauge Card
                 Card(
                     modifier = Modifier.fillMaxWidth(),
-                    shape = RoundedCornerShape(16.dp),
-                    colors = CardDefaults.cardColors(containerColor = Color(0xFF242424))
+                    shape = RoundedCornerShape(20.dp),
+                    colors = CardDefaults.cardColors(
+                        containerColor = MaterialTheme.colorScheme.surface
+                    ),
+                    elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
                 ) {
-                    Row(
+                    Column(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(18.dp),
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.SpaceBetween
+                            .padding(20.dp),
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        verticalArrangement = Arrangement.spacedBy(12.dp)
                     ) {
-                        Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
-                            Text(
-                                text = stringResource(id = R.string.device_grade),
-                                fontSize = 18.sp,
-                                color = Color(0xFFB0B0B0)
+                        RiskGauge(
+                            score = deviceSummary.deviceScore,
+                            grade = deviceSummary.grade
+                        )
+
+                        // Breakdown chips
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.SpaceEvenly
+                        ) {
+                            RiskMetricItem(label = stringResource(id = R.string.band_critical), count = deviceSummary.criticalCount, color = riskColors.critical)
+                            RiskMetricItem(label = stringResource(id = R.string.band_high), count = deviceSummary.highCount, color = riskColors.high)
+                            RiskMetricItem(label = stringResource(id = R.string.band_medium), count = deviceSummary.mediumCount, color = riskColors.medium)
+                            RiskMetricItem(label = stringResource(id = R.string.band_low), count = deviceSummary.lowCount, color = riskColors.low)
+                        }
+                    }
+                }
+
+                // Scan Now Button
+                Button(
+                    onClick = onScanNow,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(64.dp)
+                        .minimumInteractiveComponentSize(),
+                    shape = RoundedCornerShape(16.dp),
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = MaterialTheme.colorScheme.primary
+                    ),
+                    enabled = scanState != ScanState.SCANNING
+                ) {
+                    if (scanState == ScanState.SCANNING) {
+                        Row(
+                            horizontalArrangement = Arrangement.spacedBy(12.dp),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            CircularProgressIndicator(
+                                color = MaterialTheme.colorScheme.onPrimary,
+                                modifier = Modifier.size(24.dp),
+                                strokeWidth = 3.dp
                             )
                             Text(
-                                text = "Grade $deviceGrade • $deviceScore/100",
-                                fontSize = 22.sp,
-                                fontWeight = FontWeight.Bold,
-                                color = Color.White
+                                text = stringResource(id = R.string.home_scanning),
+                                style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold)
                             )
                         }
-
-                        Box(
-                            modifier = Modifier
-                                .size(64.dp)
-                                .clip(CircleShape)
-                                .background(gradeColor),
-                            contentAlignment = Alignment.Center
+                    } else {
+                        Row(
+                            horizontalArrangement = Arrangement.spacedBy(8.dp),
+                            verticalAlignment = Alignment.CenterVertically
                         ) {
+                            Icon(imageVector = Icons.Default.Refresh, contentDescription = null)
                             Text(
-                                text = deviceGrade,
-                                fontSize = 32.sp,
-                                fontWeight = FontWeight.ExtraBold,
-                                color = Color.White
+                                text = stringResource(id = R.string.home_scan_now),
+                                style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold)
                             )
                         }
                     }
                 }
-            }
 
-            // "Scan Now" Button (64dp height minimum)
-            Button(
-                onClick = onScanClick,
-                enabled = !isScanning,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .heightIn(min = 64.dp),
-                shape = RoundedCornerShape(14.dp),
-                colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF1E88E5))
-            ) {
-                if (isScanning) {
-                    CircularProgressIndicator(color = Color.White, modifier = Modifier.size(24.dp))
-                    Spacer(modifier = Modifier.width(10.dp))
-                    Text(text = "Scanning…", fontSize = 20.sp, color = Color.White)
-                } else {
-                    Icon(imageVector = Icons.Default.Refresh, contentDescription = null, tint = Color.White)
-                    Spacer(modifier = Modifier.width(8.dp))
+                // Scan Stats & Timestamp
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.spacedBy(2.dp)
+                ) {
                     Text(
-                        text = stringResource(id = R.string.scan_now),
-                        fontSize = 20.sp,
-                        fontWeight = FontWeight.Bold,
-                        color = Color.White
+                        text = stringResource(
+                            id = R.string.home_scanned_stats,
+                            deviceSummary.scannedAppsCount,
+                            deviceSummary.scanDurationSeconds
+                        ),
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        textAlign = TextAlign.Center
+                    )
+
+                    val timeFormatter = remember { SimpleDateFormat("hh:mm a, dd MMM", Locale.getDefault()) }
+                    val formattedTime = timeFormatter.format(Date(deviceSummary.lastScanTimeMillis))
+                    Text(
+                        text = stringResource(id = R.string.home_last_scan, formattedTime),
+                        style = MaterialTheme.typography.labelSmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                 }
             }
 
-            // Scan Summary text
-            if (apps.isNotEmpty() && scanDuration > 0f) {
-                Text(
-                    text = stringResource(id = R.string.scanned_summary, apps.size, scanDuration),
-                    fontSize = 16.sp,
-                    color = Color(0xFF81C784),
-                    modifier = Modifier.align(Alignment.CenterHorizontally)
-                )
-            }
-
-            // Quick Nav Links (All Apps, Dormant, Share)
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(10.dp)
-            ) {
-                OutlinedButton(
-                    onClick = onAllAppsClick,
-                    modifier = Modifier.weight(1f).heightIn(min = 56.dp),
-                    shape = RoundedCornerShape(10.dp),
-                    colors = ButtonDefaults.outlinedButtonColors(contentColor = Color.White)
-                ) {
-                    Text(text = stringResource(id = R.string.all_apps), fontSize = 16.sp)
-                }
-
-                OutlinedButton(
-                    onClick = onDormantClick,
-                    modifier = Modifier.weight(1f).heightIn(min = 56.dp),
-                    shape = RoundedCornerShape(10.dp),
-                    colors = ButtonDefaults.outlinedButtonColors(contentColor = Color(0xFFFFB74D))
-                ) {
-                    Text(text = "Dormant", fontSize = 16.sp)
-                }
-
-                OutlinedButton(
-                    onClick = onShareClick,
-                    modifier = Modifier.weight(1f).heightIn(min = 56.dp),
-                    shape = RoundedCornerShape(10.dp),
-                    colors = ButtonDefaults.outlinedButtonColors(contentColor = Color(0xFF90CAF9))
-                ) {
-                    Text(text = "Share", fontSize = 16.sp)
-                }
-            }
-
-            Spacer(modifier = Modifier.height(10.dp))
-
-            // PANIC BUTTON — Always visible at bottom, large red
-            Button(
-                onClick = onPanicClick,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .heightIn(min = 64.dp),
-                shape = RoundedCornerShape(16.dp),
-                colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFC62828))
-            ) {
-                Text(text = "🚨", fontSize = 24.sp)
-                Spacer(modifier = Modifier.width(10.dp))
-                Text(
-                    text = stringResource(id = R.string.panic_button),
-                    fontSize = 20.sp,
-                    fontWeight = FontWeight.ExtraBold,
-                    color = Color.White
-                )
-            }
-
-            Spacer(modifier = Modifier.height(24.dp))
+            Spacer(modifier = Modifier.height(16.dp))
         }
     }
 }
 
 @Composable
-private fun QuestionCard(
-    question: String,
-    icon: String,
-    onClick: () -> Unit
+private fun GrandparentHomeContent(
+    deviceSummary: DeviceRiskSummary,
+    scanState: ScanState,
+    onScanNow: () -> Unit
 ) {
-    Card(
-        modifier = Modifier
-            .fillMaxWidth()
-            .heightIn(min = 72.dp)
-            .clickable { onClick() },
-        shape = RoundedCornerShape(14.dp),
-        colors = CardDefaults.cardColors(containerColor = Color(0xFF242424))
+    val riskColors = LocalRiskColors.current
+    val (statusColor, statusIcon, statusTextRes) = when {
+        deviceSummary.deviceScore >= 75 -> Triple(riskColors.high, Icons.Default.Warning, R.string.gp_status_critical)
+        deviceSummary.deviceScore >= 50 -> Triple(riskColors.high, Icons.Default.Error, R.string.gp_status_high)
+        deviceSummary.deviceScore >= 25 -> Triple(riskColors.medium, Icons.Default.Info, R.string.gp_status_medium)
+        else -> Triple(riskColors.low, Icons.Default.CheckCircle, R.string.gp_status_safe)
+    }
+
+    Column(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.spacedBy(24.dp)
     ) {
-        Row(
+        Text(
+            text = stringResource(id = R.string.gp_home_question),
+            style = MaterialTheme.typography.headlineLarge.copy(fontSize = 32.sp, fontWeight = FontWeight.Bold),
+            color = MaterialTheme.colorScheme.onBackground,
+            textAlign = TextAlign.Center
+        )
+
+        // One Big Colored Result Card
+        Card(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(18.dp),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(14.dp)
+                .padding(vertical = 8.dp),
+            shape = RoundedCornerShape(24.dp),
+            colors = CardDefaults.cardColors(
+                containerColor = statusColor.copy(alpha = 0.15f)
+            ),
+            elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
         ) {
-            Text(text = icon, fontSize = 26.sp)
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(32.dp),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.spacedBy(16.dp)
+            ) {
+                Surface(
+                    shape = CircleShape,
+                    color = statusColor,
+                    modifier = Modifier.size(96.dp)
+                ) {
+                    Box(contentAlignment = Alignment.Center) {
+                        Icon(
+                            imageVector = statusIcon,
+                            contentDescription = null,
+                            tint = Color.White,
+                            modifier = Modifier.size(56.dp)
+                        )
+                    }
+                }
+
+                Text(
+                    text = stringResource(id = statusTextRes),
+                    style = MaterialTheme.typography.headlineMedium.copy(
+                        fontSize = 26.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = statusColor
+                    ),
+                    textAlign = TextAlign.Center
+                )
+            }
+        }
+
+        // Scan button for grandparent mode
+        Button(
+            onClick = onScanNow,
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(68.dp)
+                .minimumInteractiveComponentSize(),
+            shape = RoundedCornerShape(20.dp),
+            colors = ButtonDefaults.buttonColors(
+                containerColor = MaterialTheme.colorScheme.primary
+            ),
+            enabled = scanState != ScanState.SCANNING
+        ) {
             Text(
-                text = question,
-                fontSize = 19.sp,
-                fontWeight = FontWeight.SemiBold,
-                color = Color.White,
-                modifier = Modifier.weight(1f)
-            )
-            Icon(
-                imageVector = Icons.Default.ChevronRight,
-                contentDescription = null,
-                tint = Color(0xFF888888)
+                text = stringResource(id = R.string.home_scan_now),
+                style = MaterialTheme.typography.headlineMedium.copy(
+                    fontSize = 24.sp,
+                    fontWeight = FontWeight.Bold
+                )
             )
         }
+    }
+}
+
+@Composable
+private fun RiskMetricItem(label: String, count: Int, color: Color) {
+    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+        Text(
+            text = count.toString(),
+            style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold, color = color)
+        )
+        Text(
+            text = label,
+            style = MaterialTheme.typography.labelSmall,
+            color = MaterialTheme.colorScheme.onSurfaceVariant
+        )
     }
 }
