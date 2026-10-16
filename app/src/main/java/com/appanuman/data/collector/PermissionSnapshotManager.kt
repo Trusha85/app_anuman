@@ -36,25 +36,26 @@ class PermissionSnapshotManager(private val context: Context) {
         packageName: String,
         currentDeclaredPermissions: List<String>
     ): Pair<Boolean, List<String>> {
-        val key = "snap_$packageName"
-        val previousJson = prefs.getString(key, null)
+        return try {
+            val key = "snap_$packageName"
+            val previousJson = prefs.getString(key, null)
+            val currentSet = currentDeclaredPermissions.toSet()
 
-        val currentSet = currentDeclaredPermissions.toSet()
-
-        if (previousJson == null) {
-            // First time seeing this app, store snapshot and do not flag creep
-            saveSnapshot(key, currentSet)
-            return Pair(false, emptyList())
+            if (previousJson == null) {
+                saveSnapshot(key, currentSet)
+                Pair(false, emptyList())
+            } else {
+                val previousSet = parseJsonArrayToSet(previousJson)
+                val addedPermissions = (currentSet - previousSet).filter { perm ->
+                    isDangerousOrSensitive(perm)
+                }
+                saveSnapshot(key, currentSet)
+                val hasCreep = addedPermissions.isNotEmpty()
+                Pair(hasCreep, addedPermissions)
+            }
+        } catch (e: Exception) {
+            Pair(false, emptyList())
         }
-
-        val previousSet = parseJsonArrayToSet(previousJson)
-        val addedPermissions = (currentSet - previousSet).filter { perm ->
-            isDangerousOrSensitive(perm)
-        }
-
-        saveSnapshot(key, currentSet)
-        val hasCreep = addedPermissions.isNotEmpty()
-        return Pair(hasCreep, addedPermissions)
     }
 
     private fun isDangerousOrSensitive(permissionName: String): Boolean {

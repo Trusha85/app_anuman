@@ -97,9 +97,10 @@ class AppInventoryCollector(
 
         for (pkgInfo in installedPackages) {
             val appInfo = pkgInfo.applicationInfo ?: continue
-            val isSystemApp = (appInfo.flags and ApplicationInfo.FLAG_SYSTEM) != 0
+            val isSystemApp = (appInfo.flags and ApplicationInfo.FLAG_SYSTEM) != 0 &&
+                    (appInfo.flags and ApplicationInfo.FLAG_UPDATED_SYSTEM_APP) == 0
 
-            // Skip system apps unless includeSystem is true
+            // Skip non-updated system apps unless includeSystem is true
             if (isSystemApp && !includeSystem) {
                 continue
             }
@@ -109,6 +110,18 @@ class AppInventoryCollector(
                 resultList.add(profile)
             } catch (e: Exception) {
                 // Defensive: never crash scanning on a single malformed app
+            }
+        }
+
+        // Fallback: If device has no third-party user apps, scan all apps so user sees real phone apps
+        if (resultList.isEmpty() && installedPackages.isNotEmpty()) {
+            for (pkgInfo in installedPackages) {
+                val appInfo = pkgInfo.applicationInfo ?: continue
+                try {
+                    val profile = buildAppProfile(pm, pkgInfo, appInfo, usageMap)
+                    resultList.add(profile)
+                } catch (e: Exception) {
+                }
             }
         }
 
