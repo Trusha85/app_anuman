@@ -72,6 +72,18 @@ class AppInventoryCollector(
         }
     }
 
+    private val permProtectionCache = java.util.concurrent.ConcurrentHashMap<String, Int>()
+
+    private fun getCachedProtectionLevel(pm: PackageManager, permName: String): Int {
+        return permProtectionCache.getOrPut(permName) {
+            try {
+                pm.getPermissionInfo(permName, 0).protectionLevel
+            } catch (e: Exception) {
+                0
+            }
+        }
+    }
+
     fun collectAllApps(includeSystem: Boolean = false): List<AppRiskProfile> {
         val currentContext = appContext ?: return emptyList()
         return collectAllApps(currentContext, includeSystem)
@@ -79,14 +91,14 @@ class AppInventoryCollector(
 
     fun collectAllApps(context: Context, includeSystem: Boolean): List<AppRiskProfile> {
         val pm = context.packageManager
-        val flags = PackageManager.GET_PERMISSIONS or PackageManager.GET_META_DATA
 
-        val installedPackages: List<PackageInfo> = try {
+        // Step 1: Query package headers with flags = 0 to prevent Binder 1MB buffer TransactionTooLargeException
+        val packageHeaderList: List<PackageInfo> = try {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                pm.getInstalledPackages(PackageManager.PackageInfoFlags.of(flags.toLong()))
+                pm.getInstalledPackages(PackageManager.PackageInfoFlags.of(0L))
             } else {
                 @Suppress("DEPRECATION")
-                pm.getInstalledPackages(flags)
+                pm.getInstalledPackages(0)
             }
         } catch (e: Exception) {
             emptyList()
@@ -95,18 +107,26 @@ class AppInventoryCollector(
         val usageMap = usageStatsCollector.queryLastTimeUsedMap()
         val resultList = mutableListOf<AppRiskProfile>()
 
-        for (pkgInfo in installedPackages) {
-            val appInfo = pkgInfo.applicationInfo ?: continue
-            val isSystemApp = (appInfo.flags and ApplicationInfo.FLAG_SYSTEM) != 0 &&
+        // Step 2: Iterate over packages, filter system apps early, and fetch permissions per-package
+        for (pkgHeader in packageHeaderList) {
+            val appInfo = pkgHeader.applicationInfo ?: continue
+            val isNonUpdatedSystem = (appInfo.flags and ApplicationInfo.FLAG_SYSTEM) != 0 &&
                     (appInfo.flags and ApplicationInfo.FLAG_UPDATED_SYSTEM_APP) == 0
 
             // Skip non-updated system apps unless includeSystem is true
-            if (isSystemApp && !includeSystem) {
+            if (isNonUpdatedSystem && !includeSystem) {
                 continue
             }
 
             try {
-                val profile = buildAppProfile(pm, pkgInfo, appInfo, usageMap)
+                val fullPkgInfo = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                    pm.getPackageInfo(pkgHeader.packageName, PackageManager.PackageInfoFlags.of(PackageManager.GET_PERMISSIONS.toLong()))
+                } else {
+                    @Suppress("DEPRECATION")
+                    pm.getPackageInfo(pkgHeader.packageName, PackageManager.GET_PERMISSIONS)
+                }
+                val fullAppInfo = fullPkgInfo.applicationInfo ?: appInfo
+                val profile = buildAppProfile(pm, fullPkgInfo, fullAppInfo, usageMap)
                 resultList.add(profile)
             } catch (e: Exception) {
                 // Defensive: never crash scanning on a single malformed app
@@ -114,11 +134,18 @@ class AppInventoryCollector(
         }
 
         // Fallback: If device has no third-party user apps, scan all apps so user sees real phone apps
-        if (resultList.isEmpty() && installedPackages.isNotEmpty()) {
-            for (pkgInfo in installedPackages) {
-                val appInfo = pkgInfo.applicationInfo ?: continue
+        if (resultList.isEmpty() && packageHeaderList.isNotEmpty()) {
+            for (pkgHeader in packageHeaderList) {
+                val appInfo = pkgHeader.applicationInfo ?: continue
                 try {
-                    val profile = buildAppProfile(pm, pkgInfo, appInfo, usageMap)
+                    val fullPkgInfo = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                        pm.getPackageInfo(pkgHeader.packageName, PackageManager.PackageInfoFlags.of(PackageManager.GET_PERMISSIONS.toLong()))
+                    } else {
+                        @Suppress("DEPRECATION")
+                        pm.getPackageInfo(pkgHeader.packageName, PackageManager.GET_PERMISSIONS)
+                    }
+                    val fullAppInfo = fullPkgInfo.applicationInfo ?: appInfo
+                    val profile = buildAppProfile(pm, fullPkgInfo, fullAppInfo, usageMap)
                     resultList.add(profile)
                 } catch (e: Exception) {
                 }
@@ -143,11 +170,12 @@ class AppInventoryCollector(
 
         // Installer trust classification
         val installerPackageName = getInstallerPackage(pm, packageName)
-        val isSystem = (appInfo.flags and ApplicationInfo.FLAG_SYSTEM) != 0
+        val isNonUpdatedSystem = (appInfo.flags and ApplicationInfo.FLAG_SYSTEM) != 0 &&
+                (appInfo.flags and ApplicationInfo.FLAG_UPDATED_SYSTEM_APP) == 0
         val installerTrust = when {
-            isSystem -> InstallerTrust.PREINSTALLED
             installerPackageName == "com.android.vending" -> InstallerTrust.VERIFIED
             installerPackageName == "com.google.android.packageinstaller" -> InstallerTrust.SYSTEM_INSTALL
+            isNonUpdatedSystem -> InstallerTrust.PREINSTALLED
             installerPackageName.isNullOrEmpty() -> InstallerTrust.UNKNOWN
             else -> InstallerTrust.SIDELOADED
         }
@@ -162,11 +190,7 @@ class AppInventoryCollector(
             val permName = requestedPerms[i]
             val category = PermissionCategoryMapper.getCategory(permName)
 
-            val protectionLevel = try {
-                pm.getPermissionInfo(permName, 0).protectionLevel
-            } catch (e: Exception) {
-                0
-            }
+            val protectionLevel = getCachedProtectionLevel(pm, permName)
 
             val isGranted = if (i < requestedFlags.size) {
                 (requestedFlags[i] and PackageInfo.REQUESTED_PERMISSION_GRANTED) != 0
@@ -316,14 +340,14 @@ class AppInventoryCollector(
             if (drawable is BitmapDrawable && drawable.bitmap != null) {
                 return drawable.bitmap
             }
-            val width = if (drawable.intrinsicWidth > 0) drawable.intrinsicWidth else 72
-            val height = if (drawable.intrinsicHeight > 0) drawable.intrinsicHeight else 72
+            val width = 72
+            val height = 72
             val bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888)
             val canvas = Canvas(bitmap)
             drawable.setBounds(0, 0, canvas.width, canvas.height)
             drawable.draw(canvas)
             bitmap
-        } catch (e: Exception) {
+        } catch (t: Throwable) {
             null
         }
     }

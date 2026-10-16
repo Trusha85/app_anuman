@@ -24,7 +24,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     private val _language = MutableStateFlow(preferenceManager.language)
     val language: StateFlow<Language> = _language.asStateFlow()
 
-    private val _scanState = MutableStateFlow(ScanState.COMPLETED)
+    private val _scanState = MutableStateFlow(ScanState.SCANNING)
     val scanState: StateFlow<ScanState> = _scanState.asStateFlow()
 
     private val _includeSystemApps = MutableStateFlow(false)
@@ -40,7 +40,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     val sortOrder: StateFlow<SortOrder> = _sortOrder.asStateFlow()
 
     // Master list of apps matching data layer model shapes exactly
-    private val _rawApps = MutableStateFlow<List<AppRiskProfile>>(createStubAppDataset())
+    private val _rawApps = MutableStateFlow<List<AppRiskProfile>>(emptyList())
 
     // Self audit profile (App-Anuman must score <= 10)
     val selfAuditProfile: StateFlow<AppRiskProfile> = _rawApps.map { apps ->
@@ -135,7 +135,11 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
         viewModelScope.launch(kotlinx.coroutines.Dispatchers.IO) {
             _scanState.value = ScanState.SCANNING
             try {
-                val realCollected = inventoryCollector.collectAllApps(getApplication(), _includeSystemApps.value)
+                var realCollected = inventoryCollector.collectAllApps(getApplication(), _includeSystemApps.value)
+                if (realCollected.isEmpty()) {
+                    // Fallback: If 0 non-system apps were found, collect all installed packages
+                    realCollected = inventoryCollector.collectAllApps(getApplication(), true)
+                }
                 val mappedApps = if (realCollected.isNotEmpty()) {
                     realCollected.map { it.toUiModel() }
                 } else {
@@ -274,28 +278,28 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     }
 
     private fun calculateDeviceSummary(apps: List<AppRiskProfile>): DeviceRiskSummary {
-        val nonSystem = apps.filter { !it.isSystemApp }
-        val critical = nonSystem.count { it.riskBand == RiskBand.CRITICAL }
-        val high = nonSystem.count { it.riskBand == RiskBand.HIGH }
-        val medium = nonSystem.count { it.riskBand == RiskBand.MEDIUM }
-        val low = nonSystem.count { it.riskBand == RiskBand.LOW }
-        val dormant = nonSystem.count { it.isDormant }
-        val panic = nonSystem.count { it.isRemoteAccessApp || it.riskScore >= 80 }
+        val targetApps = if (apps.any { !it.isSystemApp }) apps.filter { !it.isSystemApp } else apps
+        val critical = targetApps.count { it.riskBand == RiskBand.CRITICAL }
+        val high = targetApps.count { it.riskBand == RiskBand.HIGH }
+        val medium = targetApps.count { it.riskBand == RiskBand.MEDIUM }
+        val low = targetApps.count { it.riskBand == RiskBand.LOW }
+        val dormant = targetApps.count { it.isDormant }
+        val panic = targetApps.count { it.isRemoteAccessApp || it.riskScore >= 80 }
 
         // Formula from Section C:
         // criticalCount * 20 + highCount * 10 + mediumCount * 3 + dormantCount * 5 + panicTriggers * 25, capped at 100
         val rawScore = (critical * 20) + (high * 10) + (medium * 3) + (dormant * 5) + (panic * 25)
         val score = rawScore.coerceAtMost(100)
 
-        val otpCount = nonSystem.count {
+        val otpCount = targetApps.count {
             it.categoryStatuses[PermissionCategory.SMS] == CategoryStatus.GRANTED &&
             it.categoryStatuses[PermissionCategory.NETWORK] == CategoryStatus.GRANTED
         }
-        val bgCount = nonSystem.count {
+        val bgCount = targetApps.count {
             it.categoryStatuses[PermissionCategory.CAMERA_MIC] == CategoryStatus.GRANTED &&
             it.categoryStatuses[PermissionCategory.BACKGROUND] == CategoryStatus.GRANTED
         }
-        val screenCount = nonSystem.count {
+        val screenCount = targetApps.count {
             it.categoryStatuses[PermissionCategory.SPECIAL_ACCESS] == CategoryStatus.GRANTED
         }
 
@@ -308,7 +312,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
             lowCount = low,
             dormantCount = dormant,
             panicTriggers = panic,
-            scannedAppsCount = nonSystem.size,
+            scannedAppsCount = targetApps.size,
             scanDurationSeconds = 1.2,
             lastScanTimeMillis = System.currentTimeMillis(),
             otpStealerCount = otpCount,
