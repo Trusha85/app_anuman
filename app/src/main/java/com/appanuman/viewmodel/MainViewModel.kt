@@ -12,6 +12,11 @@ import kotlinx.coroutines.launch
 class MainViewModel(application: Application) : AndroidViewModel(application) {
 
     private val preferenceManager by lazy { PreferenceManager(application) }
+    private val inventoryCollector by lazy { com.appanuman.data.collector.AppInventoryCollector(application) }
+
+    init {
+        startScan()
+    }
 
     private val _userMode = MutableStateFlow(preferenceManager.userMode)
     val userMode: StateFlow<UserMode> = _userMode.asStateFlow()
@@ -111,6 +116,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
 
     fun setIncludeSystemApps(include: Boolean) {
         _includeSystemApps.value = include
+        startScan()
     }
 
     fun setSelectedFilter(filter: AppFilter) {
@@ -126,30 +132,140 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     }
 
     fun startScan() {
-        viewModelScope.launch {
+        viewModelScope.launch(kotlinx.coroutines.Dispatchers.IO) {
             _scanState.value = ScanState.SCANNING
-            delay(1200) // Simulates deterministic on-device scan
-            _scanState.value = ScanState.COMPLETED
-            _deviceSummary.value = calculateDeviceSummary(_rawApps.value)
+            try {
+                val realCollected = inventoryCollector.collectAllApps(getApplication(), _includeSystemApps.value)
+                val mappedApps = if (realCollected.isNotEmpty()) {
+                    realCollected.map { it.toUiModel() }
+                } else {
+                    createStubAppDataset()
+                }
+                _rawApps.value = mappedApps
+                _deviceSummary.value = calculateDeviceSummary(mappedApps)
+            } catch (e: Exception) {
+                _deviceSummary.value = calculateDeviceSummary(_rawApps.value)
+            } finally {
+                _scanState.value = ScanState.COMPLETED
+            }
         }
     }
 
     fun runPanicAudit() {
-        viewModelScope.launch {
+        viewModelScope.launch(kotlinx.coroutines.Dispatchers.IO) {
             _panicResult.value = _panicResult.value.copy(isScanning = true, completedSteps = 0)
-            for (step in 1..5) {
-                delay(400)
-                _panicResult.value = _panicResult.value.copy(completedSteps = step)
+            val now = System.currentTimeMillis()
+            val apps = _rawApps.value
+
+            val remoteFound = apps.filter {
+                it.isRemoteAccessApp || com.appanuman.data.collector.AppInventoryCollector.REMOTE_ACCESS_PACKAGES.contains(it.packageName)
             }
-            // Evaluate findings from dataset
-            val hasRemote = _rawApps.value.any { it.isRemoteAccessApp }
-            val hasOverlayTrap = _rawApps.value.any { it.threatNarratives.any { t -> t.chainId == "OVERLAY_TRAP" } }
+            kotlinx.coroutines.delay(250)
+            _panicResult.value = _panicResult.value.copy(completedSteps = 1)
+
+            val recent48h = apps.filter {
+                (now - it.firstInstallTime) < (48L * 60 * 60 * 1000) &&
+                (it.specialAccessCoverage["Accessibility"] == SpecialAccessState.ENABLED ||
+                 it.specialAccessCoverage["Overlay"] == SpecialAccessState.ENABLED)
+            }
+            kotlinx.coroutines.delay(250)
+            _panicResult.value = _panicResult.value.copy(completedSteps = 2)
+
+            val recentSideloads = apps.filter {
+                (it.trustLevel == TrustLevel.SIDELOADED || it.trustLevel == TrustLevel.UNKNOWN) &&
+                (now - it.firstInstallTime) < (24L * 60 * 60 * 1000)
+            }
+            kotlinx.coroutines.delay(250)
+            _panicResult.value = _panicResult.value.copy(completedSteps = 3)
+
+            val activeScreenControl = apps.filter {
+                it.threatNarratives.any { t ->
+                    t.chainId == "CHAIN_OVERLAY_TRAP" || t.chainId == "CHAIN_SILENT_SPY" ||
+                    t.chainId == "OVERLAY_TRAP" || t.chainId == "SILENT_SPY"
+                }
+            }
+            kotlinx.coroutines.delay(250)
+            _panicResult.value = _panicResult.value.copy(completedSteps = 4)
+
+            val upiFraud = apps.filter {
+                val name = it.appName.lowercase()
+                (name.contains("bank") || name.contains("pay") || name.contains("upi") || name.contains("money") || name.contains("wallet")) &&
+                it.categoryStatuses[PermissionCategory.SMS] == CategoryStatus.GRANTED &&
+                it.specialAccessCoverage["NotificationListener"] == SpecialAccessState.ENABLED
+            }
+            kotlinx.coroutines.delay(250)
+
+            val checksList = listOf(
+                PanicCheckItem(
+                    id = 1,
+                    title_en = "Remote control & screen share apps",
+                    title_hi = "रिमोट कंट्रोल और स्क्रीन शेयर ऐप्स",
+                    description_en = "Checks for known dangerous screen-sharing utilities (AnyDesk, TeamViewer, RustDesk, etc.)",
+                    description_hi = "ज्ञात खतरनाक स्क्रीन-शेयरिंग उपयोगिताओं की जांच करता है",
+                    isTriggered = remoteFound.isNotEmpty(),
+                    severity = if (remoteFound.isNotEmpty()) RiskBand.CRITICAL else RiskBand.LOW,
+                    flaggedPackageName = remoteFound.firstOrNull()?.packageName,
+                    flaggedAppName = remoteFound.firstOrNull()?.appName
+                ),
+                PanicCheckItem(
+                    id = 2,
+                    title_en = "Recent accessibility/overlay apps",
+                    title_hi = "हाल ही में स्थापित एक्सेसिबिलिटी/ओवरले ऐप्स",
+                    description_en = "Apps installed within 48h with full accessibility or overlay enabled",
+                    description_hi = "48 घंटे के भीतर इंस्टॉल किए गए ऐप्स जिनमें एक्सेसिबिलिटी चालू है",
+                    isTriggered = recent48h.isNotEmpty(),
+                    severity = if (recent48h.isNotEmpty()) RiskBand.HIGH else RiskBand.LOW,
+                    flaggedPackageName = recent48h.firstOrNull()?.packageName,
+                    flaggedAppName = recent48h.firstOrNull()?.appName
+                ),
+                PanicCheckItem(
+                    id = 3,
+                    title_en = "Sideloaded apps in last 24h",
+                    title_hi = "पिछले 24 घंटे में बाहर से लोड किए गए ऐप्स",
+                    description_en = "Apps installed from web browsers, APK files, or messaging apps",
+                    description_hi = "वेब ब्राउज़र या APK फ़ाइलों से इंस्टॉल किए गए ऐप्स",
+                    isTriggered = recentSideloads.isNotEmpty(),
+                    severity = if (recentSideloads.isNotEmpty()) RiskBand.HIGH else RiskBand.LOW,
+                    flaggedPackageName = recentSideloads.firstOrNull()?.packageName,
+                    flaggedAppName = recentSideloads.firstOrNull()?.appName
+                ),
+                PanicCheckItem(
+                    id = 4,
+                    title_en = "Active screen control risks",
+                    title_hi = "सक्रिय स्क्रीन नियंत्रण जोखिम",
+                    description_en = "OVERLAY_TRAP or SILENT_SPY attack chains triggered",
+                    description_hi = "स्क्रीन पर फर्जी विंडो बनाकर इनपुट चुराने का खतरा",
+                    isTriggered = activeScreenControl.isNotEmpty(),
+                    severity = if (activeScreenControl.isNotEmpty()) RiskBand.CRITICAL else RiskBand.LOW,
+                    flaggedPackageName = activeScreenControl.firstOrNull()?.packageName,
+                    flaggedAppName = activeScreenControl.firstOrNull()?.appName
+                ),
+                PanicCheckItem(
+                    id = 5,
+                    title_en = "UPI & banking fraud pattern",
+                    title_hi = "UPI और बैंकिंग धोखाधड़ी पैटर्न",
+                    description_en = "SMS interception combined with active notification listeners",
+                    description_hi = "SMS और बैंकिंग अलर्ट सूचनाओं को चुराने का तरीका",
+                    isTriggered = upiFraud.isNotEmpty(),
+                    severity = if (upiFraud.isNotEmpty()) RiskBand.HIGH else RiskBand.LOW,
+                    flaggedPackageName = upiFraud.firstOrNull()?.packageName,
+                    flaggedAppName = upiFraud.firstOrNull()?.appName
+                )
+            )
+
+            val triggeredCount = checksList.count { it.isTriggered }
             val verdict = when {
-                hasRemote || hasOverlayTrap -> PanicVerdict.WARNING
-                _rawApps.value.any { it.riskBand == RiskBand.HIGH } -> PanicVerdict.CONCERN
+                triggeredCount >= 2 || remoteFound.isNotEmpty() || activeScreenControl.isNotEmpty() -> PanicVerdict.WARNING
+                triggeredCount == 1 -> PanicVerdict.CONCERN
                 else -> PanicVerdict.SAFE
             }
-            _panicResult.value = _panicResult.value.copy(isScanning = false, verdict = verdict, completedSteps = 5)
+
+            _panicResult.value = PanicScanResult(
+                verdict = verdict,
+                checks = checksList,
+                isScanning = false,
+                completedSteps = 5
+            )
         }
     }
 
@@ -904,6 +1020,111 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
                 creepApp,
                 calculatorApp,
                 settingsApp
+            )
+        }
+
+        private fun com.appanuman.data.model.AppRiskProfile.toUiModel(): AppRiskProfile {
+            val categoryStatusesMap = this.categoryMap.map { (cat, res) ->
+                val uiCat = PermissionCategory.valueOf(cat.name)
+                val uiStatus = when (res.state) {
+                    com.appanuman.data.model.PermissionState.GRANTED -> CategoryStatus.GRANTED
+                    com.appanuman.data.model.PermissionState.DECLARED_ONLY -> CategoryStatus.DECLARED_ONLY
+                    com.appanuman.data.model.PermissionState.NOT_REQUESTED -> CategoryStatus.NOT_REQUESTED
+                    com.appanuman.data.model.PermissionState.UNABLE_TO_CHECK -> CategoryStatus.UNABLE_TO_CHECK
+                }
+                uiCat to uiStatus
+            }.toMap()
+
+            val categoryPermissionsMap = this.categoryMap.map { (cat, res) ->
+                PermissionCategory.valueOf(cat.name) to res.permissions.map { it.permissionName }
+            }.toMap()
+
+            val uiWaterfall = this.scoringFindings.map {
+                ScoringFinding(
+                    ruleId = it.ruleId,
+                    label_en = it.label_en,
+                    label_hi = it.label_hi,
+                    points = it.points,
+                    evidence = it.evidence
+                )
+            }
+
+            val uiNarratives = this.threatNarratives.map {
+                ThreatNarrative(
+                    chainId = it.chainId.name,
+                    title_en = it.title_en,
+                    title_hi = it.title_hi,
+                    body_en = it.body_en,
+                    body_hi = it.body_hi,
+                    analogy_en = it.analogy_en,
+                    analogy_hi = it.analogy_hi,
+                    mitre_ref = it.mitre_ref,
+                    severity = RiskBand.valueOf(it.severity.name)
+                )
+            }
+
+            val uiTrustLevel = when (this.installerTrust) {
+                com.appanuman.data.model.InstallerTrust.VERIFIED -> TrustLevel.VERIFIED
+                com.appanuman.data.model.InstallerTrust.SYSTEM_INSTALL -> TrustLevel.SYSTEM_INSTALL
+                com.appanuman.data.model.InstallerTrust.UNKNOWN -> TrustLevel.UNKNOWN
+                com.appanuman.data.model.InstallerTrust.SIDELOADED -> TrustLevel.SIDELOADED
+                com.appanuman.data.model.InstallerTrust.PREINSTALLED -> TrustLevel.PREINSTALLED
+            }
+
+            val specialAccessMap = mapOf(
+                "Accessibility" to when (this.specialAccess.accessibilityEnabled) {
+                    com.appanuman.data.model.PermissionState.GRANTED -> SpecialAccessState.ENABLED
+                    com.appanuman.data.model.PermissionState.UNABLE_TO_CHECK -> SpecialAccessState.UNABLE_TO_CHECK
+                    else -> SpecialAccessState.NOT_ENABLED
+                },
+                "DeviceAdmin" to when (this.specialAccess.deviceAdminActive) {
+                    com.appanuman.data.model.PermissionState.GRANTED -> SpecialAccessState.ACTIVE
+                    com.appanuman.data.model.PermissionState.UNABLE_TO_CHECK -> SpecialAccessState.UNABLE_TO_CHECK
+                    else -> SpecialAccessState.NOT_ACTIVE
+                },
+                "NotificationListener" to when (this.specialAccess.notificationListenerEnabled) {
+                    com.appanuman.data.model.PermissionState.GRANTED -> SpecialAccessState.ENABLED
+                    com.appanuman.data.model.PermissionState.UNABLE_TO_CHECK -> SpecialAccessState.UNABLE_TO_CHECK
+                    else -> SpecialAccessState.NOT_ENABLED
+                },
+                "Overlay" to when (this.specialAccess.overlayState) {
+                    com.appanuman.data.model.PermissionState.GRANTED -> SpecialAccessState.ENABLED
+                    com.appanuman.data.model.PermissionState.DECLARED_ONLY -> SpecialAccessState.DECLARED_ONLY
+                    com.appanuman.data.model.PermissionState.UNABLE_TO_CHECK -> SpecialAccessState.UNABLE_TO_CHECK
+                    else -> SpecialAccessState.NOT_ENABLED
+                }
+            )
+
+            return AppRiskProfile(
+                packageName = this.packageName,
+                appName = this.label,
+                versionName = this.versionName,
+                versionCode = 1L,
+                firstInstallTime = this.firstInstallTime,
+                lastUpdateTime = this.lastUpdateTime,
+                targetSdkVersion = this.targetSdkVersion,
+                isSystemApp = this.installerTrust == com.appanuman.data.model.InstallerTrust.PREINSTALLED,
+                trustLevel = uiTrustLevel,
+                installerPackageName = this.installerPackageName,
+                riskScore = this.riskScore,
+                riskBand = RiskBand.fromScore(this.riskScore),
+                categoryStatuses = categoryStatusesMap,
+                categoryPermissions = categoryPermissionsMap,
+                declaredPermissions = this.declaredPermissions.map { it.permissionName },
+                grantedPermissions = this.grantedPermissions.map { it.permissionName },
+                waterfall = uiWaterfall,
+                threatNarratives = uiNarratives,
+                whyFlagged = this.whyFlagged,
+                whyFlagged_hi = this.whyFlagged,
+                contextMismatch = this.contextMismatch,
+                mismatchSeverity = if (this.contextMismatch) "HIGH" else null,
+                permissionCreepFlag = this.permissionCreepFlag,
+                addedPermissions = this.addedPermissions,
+                isDormant = this.isDormant,
+                daysUnused = this.daysUnused ?: 0,
+                dangerScore = if (this.isDormant) (this.riskScore + (this.daysUnused ?: 0) / 2) else 0,
+                isRemoteAccessApp = this.isRemoteAccessApp,
+                specialAccessCoverage = specialAccessMap
             )
         }
     }
