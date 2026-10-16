@@ -1,0 +1,117 @@
+<resources>
+    <string name="app_name">App-Anuman</string>
+    <string name="scan_now">अभी स्कैन करें</string>
+    <string name="question_otp">मेरे OTP कौन पढ़ सकता है?</string>
+    <string name="question_watch">पृष्ठभूमि में मुझे कौन देख सकता है?</string>
+    <string name="question_control">मेरी स्क्रीन कौन नियंत्रित कर सकता है?</string>
+    <string name="risk_critical">गंभीर खतरा</string>
+    <string name="risk_high">उच्च खतरा</string>
+    <string name="risk_medium">मध्यम खतरा</string>
+    <string name="risk_low">कम खतरा</string>
+    <string name="why_flagged">क्यों चिह्नित किया</string>
+    <string name="open_settings">ऐप सेटिंग्स खोलें</string>
+    <string name="uninstall">अनइंस्टॉल करें</string>
+    <string name="trust_verified">सत्यापित (Play Store)</string>
+    <string name="trust_unknown">अज्ञात स्रोत</string>
+    <string name="trust_sideloaded">साइडलोड — सावधान</string>
+    <string name="trust_system">सिस्टम इंस्टाल</string>
+    <string name="trust_preinstalled">पहले से इंस्टॉल</string>
+    <string name="granted">अनुमति दी गई</string>
+    <string name="declared_only">केवल घोषित</string>
+    <string name="not_requested">अनुरोध नहीं</string>
+    <string name="unable_to_check">जांच नहीं हो सकी</string>
+    <string name="panic_button">क्या मुझे ठगा जा रहा है?</string>
+    <string name="safe_verdict">सुरक्षित लगता है</string>
+    <string name="check_verdict">जांच करें</string>
+    <string name="attention_verdict">ध्यान दें</string>
+    <string name="danger_verdict">अभी कार्रवाई करें</string>
+    <string name="grandparent_safe">आपका फोन सुरक्षित है</string>
+    <string name="grandparent_check">कुछ चीजें जांचें</string>
+    <string name="grandparent_attention">कुछ ऐप्स पर ध्यान दें</string>
+    <string name="grandparent_danger">अभी कार्रवाई करें — उच्च खतरा</string>
+    <string name="get_help">इस ऐप में मदद लें</string>
+    <string name="dormant_title">सोए हुए ऐप्स — अभी भी एक्सेस है</string>
+    <string name="share_title">परिवार के साथ साझा करें</string>
+    <string name="scan_coverage">स्कैन कवरेज</string>
+    <string name="days_unused">%d दिनों से उपयोग नहीं</string>
+    <string name="new_perms">नई अनुमतियां जोड़ी गईं</string>
+    <string name="scanned_summary">%1$d ऐप्स स्कैन किए %2$.1f सेकंड में — डिवाइस पर</string>
+
+    <!-- Plain analogies for categories -->
+    <string name="analogy_special">जैसे किसी अजनबी को आपके फोन की आंखें और हाथ देना।</string>
+    <string name="analogy_sms">जैसे कोई आपके बैंक के सभी पत्र खोले।</string>
+    <string name="analogy_contacts">जैसे अपनी पूरी डायरी किसी अजनबी को देना।</string>
+    <string name="analogy_camera">जैसे कोई कभी भी आपका कैमरा चालू करे।</string>
+    <string name="analogy_location">जैसे कोई हमेशा जाने आप कहां हैं।</string>
+    <string name="analogy_phone">जैसे कोई आपका नंबर और पहचान जाने।</string>
+    <string name="analogy_storage">जैसे कोई आपकी सभी फोटो और फाइलें पढ़े।</string>
+    <string name="analogy_background">जैसे कोई घर में रहे चाहे आप जाएं या नहीं।</string>
+    <string name="analogy_network">जैसे एक खुला लेटरबॉक्स जिसमें कोई भी डाल सके।</string>
+
+    <!-- Category names -->
+    <string name="cat_special">विशेष पहुंच</string>
+    <string name="cat_sms">SMS और OTP</string>
+    <string name="cat_contacts">संपर्क और कॉल</string>
+    <string name="cat_camera">कैमरा और माइक</string>
+    <string name="cat_location">स्थान (लोकेशन)</string>
+    <string name="cat_phone">फोन पहचान</string>
+    <string name="cat_storage">फोटो और स्टोरेज</string>
+    <string name="cat_background">पृष्ठभूमि पहुंच</string>
+    <string name="cat_network">नेटवर्क पहुंच</string>
+
+    <!-- Panic Screen Strings -->
+    <string name="panic_title">स्कैम जांच</string>
+    <string name="panic_subtitle">डिवाइस पर गहन स्कैम पैटर्न विश्लेषण चल रहा है…</string>
+    <string name="panic_check1">रिमोट कंट्रोल ऐप्स</string>
+    <string name="panic_check2">हाल ही में दी गई विशेष अनुमति</string>
+    <string name="panic_check3">हाल ही में साइडलोड किए गए ऐप्स</string>
+    <string name="panic_check4">सक्रिय स्क्रीन नियंत्रण का खतरा</string>
+    <string name="panic_check5">UPI धोखाधड़ी पैटर्न</string>
+    <string name="panic_verdict_safe">कोई स्कैम संकेत नहीं मिला</string>
+    <string name="panic_verdict_warning">एक चिंता मिली — नीचे देखें</string>
+    <string name="panic_verdict_danger">चेतावनी: संभावित स्कैम — अभी कार्रवाई करें</string>
+    <string name="panic_share_warning">यह चेतावनी साझा करें</string>
+    <string name="panic_take_action">कार्रवाई करें</string>
+
+    <!-- Dormant Danger Strings -->
+    <string name="dormant_summary_template">%1$d ऐप्स के पास 30+ दिनों से बिना उपयोग के आपके %2$s का एक्सेस है।</string>
+    <string name="dormant_permission_title">उपयोग डेटा अनुमति आवश्यक है</string>
+    <string name="dormant_permission_desc">यह उन ऐप्स को खोजने में मदद करता है जिनका उपयोग नहीं हुआ है लेकिन फिर भी वे संदेश और कैमरा देख सकते हैं।</string>
+    <string name="dormant_grant_btn">अनुमति प्रदान करें</string>
+    <string name="dormant_skip_btn">अभी छोड़ें</string>
+    <string name="dormant_clean_up">हटाएं / साफ करें</string>
+    <string name="exposure_score">जोखिम स्कोर</string>
+    <string name="no_dormant_apps">कोई निष्क्रिय जोखिम भरा ऐप नहीं मिला। आपका फोन सुरक्षित है!</string>
+
+    <!-- Share Screen Strings -->
+    <string name="share_screen_title">परिवार के साथ रिपोर्ट साझा करें</string>
+    <string name="share_btn_text">WhatsApp / SMS / ईमेल से साझा करें</string>
+    <string name="share_privacy_notice">केवल ऊपर दिया गया सारांश साझा किया जाएगा। आपका पूरा स्कैन डेटा आपके फोन पर ही रहेगा।</string>
+    <string name="share_lang_en">English</string>
+    <string name="share_lang_hi">हिंदी</string>
+    <string name="preview_label">रिपोर्ट पूर्वावलोकन</string>
+
+    <!-- Live Monitor & Notification Strings -->
+    <string name="notif_channel_name">ऐप जोखिम अलर्ट</string>
+    <string name="notif_channel_desc">नए इंस्टॉल किए गए ऐप्स पर सुरक्षा या गोपनीयता जोखिम होने पर चेतावनी</string>
+    <string name="notif_flagged_title">नया ऐप चिह्नित — %s</string>
+    <string name="notif_flagged_body">खतरा: %s. समीक्षा करें।</string>
+    <string name="notif_sideloaded_body">साइडलोड ऐप जिसमें %s पहुंच है पाया गया।</string>
+
+    <!-- Modes & Settings -->
+    <string name="mode_simple">सरल</string>
+    <string name="mode_detailed">विस्तृत</string>
+    <string name="mode_grandparent">दादा-दादी मोड</string>
+    <string name="privacy_mode_title">गोपनीयता और सुरक्षा</string>
+    <string name="privacy_badge_offline">100% ऑफलाइन</string>
+    <string name="privacy_badge_secure">FLAG_SECURE सक्रिय</string>
+    <string name="privacy_badge_no_internet">शून्य इंटरनेट अनुमति</string>
+    <string name="self_audit_title">App-Anuman स्व-ऑडिट</string>
+    <string name="self_audit_desc">App-Anuman अनधिकृत पहुंच न होने की गारंटी के लिए स्वयं का ऑडिट करता है।</string>
+    <string name="self_audit_proof">स्व-ऑडिट स्कोर: %d/100 (कम खतरा)</string>
+    <string name="device_grade">डिवाइस जोखिम ग्रेड</string>
+    <string name="all_apps">सभी ऐप्स</string>
+    <string name="search_apps">ऐप्स खोजें…</string>
+    <string name="system_apps_toggle">सिस्टम ऐप्स शामिल करें</string>
+    <string name="safe_to_keep">सुरक्षित है?</string>
+</resources>

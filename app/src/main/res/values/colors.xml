@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="primary">#1E88E5</color>
+    <color name="primary_dark">#1565C0</color>
+    <color name="accent">#00BCD4</color>
+    <color name="background_dark">#1A1A1A</color>
+    <color name="card_dark">#242424</color>
+    <color name="text_white">#FFFFFF</color>
+    <color name="text_muted">#B0B0B0</color>
+
+    <!-- Risk Colors -->
+    <color name="risk_safe">#2E7D32</color>
+    <color name="risk_medium">#F57F17</color>
+    <color name="risk_warning">#E65100</color>
+    <color name="risk_danger">#C62828</color>
+</resources>

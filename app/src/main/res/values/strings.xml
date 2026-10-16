@@ -1,0 +1,117 @@
+<resources>
+    <string name="app_name">App-Anuman</string>
+    <string name="scan_now">Scan Now</string>
+    <string name="question_otp">Who can read my OTPs?</string>
+    <string name="question_watch">Who can watch me in the background?</string>
+    <string name="question_control">Who can control my screen?</string>
+    <string name="risk_critical">Critical Risk</string>
+    <string name="risk_high">High Risk</string>
+    <string name="risk_medium">Medium Risk</string>
+    <string name="risk_low">Low Risk</string>
+    <string name="why_flagged">Why Flagged</string>
+    <string name="open_settings">Open App Settings</string>
+    <string name="uninstall">Uninstall</string>
+    <string name="trust_verified">Verified (Play Store)</string>
+    <string name="trust_unknown">Unknown Source</string>
+    <string name="trust_sideloaded">Sideloaded — Caution</string>
+    <string name="trust_system">System Install</string>
+    <string name="trust_preinstalled">Pre-installed</string>
+    <string name="granted">Granted</string>
+    <string name="declared_only">Declared Only</string>
+    <string name="not_requested">Not Requested</string>
+    <string name="unable_to_check">Unable to Check</string>
+    <string name="panic_button">Am I Being Scammed?</string>
+    <string name="safe_verdict">Looks Safe</string>
+    <string name="check_verdict">Worth Checking</string>
+    <string name="attention_verdict">Needs Attention</string>
+    <string name="danger_verdict">Act Now</string>
+    <string name="grandparent_safe">Your phone looks safe</string>
+    <string name="grandparent_check">A few things to check</string>
+    <string name="grandparent_attention">Some apps need attention</string>
+    <string name="grandparent_danger">Act now — high risk found</string>
+    <string name="get_help">Get Help With This App</string>
+    <string name="dormant_title">Sleeping Apps — Still Have Access</string>
+    <string name="share_title">Share with Family</string>
+    <string name="scan_coverage">Scan Coverage</string>
+    <string name="days_unused">%d days unused</string>
+    <string name="new_perms">New Permissions Added</string>
+    <string name="scanned_summary">Scanned %1$d apps in %2$.1fs — on device</string>
+
+    <!-- Plain analogies for categories -->
+    <string name="analogy_special">Like giving a stranger your phone\'s eyes and hands.</string>
+    <string name="analogy_sms">Like letting someone open all your bank letters.</string>
+    <string name="analogy_contacts">Like sharing your entire address book with a stranger.</string>
+    <string name="analogy_camera">Like letting someone turn on your camera anytime.</string>
+    <string name="analogy_location">Like someone always knowing exactly where you are.</string>
+    <string name="analogy_phone">Like someone knowing your phone number and ID.</string>
+    <string name="analogy_storage">Like letting someone read all your photos and files.</string>
+    <string name="analogy_background">Like someone who stays in your house when you leave.</string>
+    <string name="analogy_network">Like an open letterbox anyone can post from.</string>
+
+    <!-- Category names -->
+    <string name="cat_special">Special Access</string>
+    <string name="cat_sms">SMS &amp; OTPs</string>
+    <string name="cat_contacts">Contacts &amp; Calls</string>
+    <string name="cat_camera">Camera &amp; Mic</string>
+    <string name="cat_location">Location</string>
+    <string name="cat_phone">Phone Identity</string>
+    <string name="cat_storage">Photos &amp; Storage</string>
+    <string name="cat_background">Background Access</string>
+    <string name="cat_network">Network Access</string>
+
+    <!-- Panic Screen Strings -->
+    <string name="panic_title">Scam Check</string>
+    <string name="panic_subtitle">Running deep scam pattern analysis on-device…</string>
+    <string name="panic_check1">Remote control apps</string>
+    <string name="panic_check2">Recent special access granted</string>
+    <string name="panic_check3">Recently sideloaded apps</string>
+    <string name="panic_check4">Active screen control risk</string>
+    <string name="panic_check5">UPI fraud pattern</string>
+    <string name="panic_verdict_safe">No active scam indicators detected</string>
+    <string name="panic_verdict_warning">One concern found — review below</string>
+    <string name="panic_verdict_danger">WARNING: Possible scam — act now</string>
+    <string name="panic_share_warning">Share This Warning</string>
+    <string name="panic_take_action">Take Action</string>
+
+    <!-- Dormant Danger Strings -->
+    <string name="dormant_summary_template">%1$d apps have had access to your %2$s for over 30 days without being used.</string>
+    <string name="dormant_permission_title">Usage Access Needed</string>
+    <string name="dormant_permission_desc">This helps us find apps that haven\'t been used but still have access to your messages and camera.</string>
+    <string name="dormant_grant_btn">Grant Permission</string>
+    <string name="dormant_skip_btn">Skip for now</string>
+    <string name="dormant_clean_up">Clean Up</string>
+    <string name="exposure_score">Exposure Score</string>
+    <string name="no_dormant_apps">No dormant risky apps detected. Your device is clean!</string>
+
+    <!-- Share Screen Strings -->
+    <string name="share_screen_title">Share Report with Family</string>
+    <string name="share_btn_text">Share via WhatsApp / SMS / Email</string>
+    <string name="share_privacy_notice">Only the summary above will be shared. Your full scan stays on your phone.</string>
+    <string name="share_lang_en">English</string>
+    <string name="share_lang_hi">हिंदी</string>
+    <string name="preview_label">Report Preview</string>
+
+    <!-- Live Monitor & Notification Strings -->
+    <string name="notif_channel_name">App Risk Alerts</string>
+    <string name="notif_channel_desc">Alerts when newly installed apps pose security or privacy risks</string>
+    <string name="notif_flagged_title">New app flagged — %s</string>
+    <string name="notif_flagged_body">Risk: %s. Tap to review.</string>
+    <string name="notif_sideloaded_body">Sideloaded app with %s access detected.</string>
+
+    <!-- Modes & Settings -->
+    <string name="mode_simple">Simple</string>
+    <string name="mode_detailed">Detailed</string>
+    <string name="mode_grandparent">Grandparent</string>
+    <string name="privacy_mode_title">Privacy &amp; Security</string>
+    <string name="privacy_badge_offline">100% Offline</string>
+    <string name="privacy_badge_secure">FLAG_SECURE Active</string>
+    <string name="privacy_badge_no_internet">Zero Internet Permission</string>
+    <string name="self_audit_title">App-Anuman Self-Audit</string>
+    <string name="self_audit_desc">App-Anuman audits itself to guarantee zero unauthorized access.</string>
+    <string name="self_audit_proof">Self-Audit Score: %d/100 (LOW)</string>
+    <string name="device_grade">Device Risk Grade</string>
+    <string name="all_apps">All Apps</string>
+    <string name="search_apps">Search apps…</string>
+    <string name="system_apps_toggle">Include System Apps</string>
+    <string name="safe_to_keep">Safe to Keep?</string>
+</resources>
