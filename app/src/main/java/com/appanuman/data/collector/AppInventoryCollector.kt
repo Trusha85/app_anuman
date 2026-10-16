@@ -24,7 +24,8 @@ import com.appanuman.data.scoring.RiskScoringEngine
 class AppInventoryCollector(
     private val specialAccessCollector: SpecialAccessCollector,
     private val usageStatsCollector: UsageStatsCollector,
-    private val permissionSnapshotManager: PermissionSnapshotManager
+    private val permissionSnapshotManager: PermissionSnapshotManager,
+    private val appContext: Context? = null
 ) {
 
     companion object {
@@ -39,13 +40,42 @@ class AppInventoryCollector(
             "com.hmdm.launcher",
             "com.manageengine.mdm.android"
         )
+
+        fun mapPermissionToCategory(perm: String): PermissionCategory {
+            return PermissionCategoryMapper.getCategory(perm)
+        }
     }
 
     constructor(context: Context) : this(
         specialAccessCollector = SpecialAccessCollector(context),
         usageStatsCollector = UsageStatsCollector(context),
-        permissionSnapshotManager = PermissionSnapshotManager(context)
+        permissionSnapshotManager = PermissionSnapshotManager(context),
+        appContext = context.applicationContext
     )
+
+    fun scanPackageByName(packageName: String, ctx: Context? = appContext): AppRiskProfile? {
+        val currentContext = ctx ?: appContext ?: return null
+        val pm = currentContext.packageManager
+        val flags = PackageManager.GET_PERMISSIONS or PackageManager.GET_META_DATA
+        return try {
+            val pkgInfo = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                pm.getPackageInfo(packageName, PackageManager.PackageInfoFlags.of(flags.toLong()))
+            } else {
+                @Suppress("DEPRECATION")
+                pm.getPackageInfo(packageName, flags)
+            }
+            val appInfo = pkgInfo.applicationInfo ?: return null
+            val usageMap = usageStatsCollector.queryLastTimeUsedMap()
+            buildAppProfile(pm, pkgInfo, appInfo, usageMap)
+        } catch (e: Exception) {
+            null
+        }
+    }
+
+    fun collectAllApps(includeSystem: Boolean = false): List<AppRiskProfile> {
+        val currentContext = appContext ?: return emptyList()
+        return collectAllApps(currentContext, includeSystem)
+    }
 
     fun collectAllApps(context: Context, includeSystem: Boolean): List<AppRiskProfile> {
         val pm = context.packageManager

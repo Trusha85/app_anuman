@@ -107,6 +107,10 @@ class MainViewModel(
         return repository.filterApps(_appList.value, filter)
     }
 
+    fun getAppByPackageName(packageName: String): AppRiskProfile? {
+        return _appList.value.find { it.packageName == packageName }
+    }
+
     fun getShareText(lang: Language): String {
         return repository.buildShareReport(
             summary = _deviceSummary.value,

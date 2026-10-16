@@ -1,3 +1,222 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">ऐप-अनुमान</string>
+    <string name="app_tagline">डिवाइस पर ऐप जोखिम विश्लेषक</string>
+    <string name="lang_toggle">EN</string>
+    <string name="lang_current">हिं</string>
+
+    <!-- Navigation -->
+    <string name="nav_home">होम</string>
+    <string name="nav_apps">ऐप्स</string>
+    <string name="nav_dormant">निष्क्रिय</string>
+    <string name="nav_about">सुरक्षा</string>
+
+    <!-- User Modes -->
+    <string name="mode_selector_title">प्रस्तुति मोड चुनें</string>
+    <string name="mode_simple_title">सरल मोड (डिफ़ॉल्ट)</string>
+    <string name="mode_simple_desc">सरल भाषा, रोज़मर्रा के उदाहरण, कोई तकनीकी शब्दावली नहीं</string>
+    <string name="mode_detailed_title">विस्तृत मोड</string>
+    <string name="mode_detailed_desc">पूर्ण तकनीकी मेट्रिक्स, MITRE ATT&amp;CK संदर्भ और नियम आईडी</string>
+    <string name="mode_grandparent_title">वरिष्ठ मोड</string>
+    <string name="mode_grandparent_desc">अतिरिक्त बड़े अक्षर, 3 सरल रंग, और परिवार से एक-टैप सहायता</string>
+
+    <!-- Home Screen -->
+    <string name="home_question_otp_title">मेरे OTP कौन पढ़ सकता है?</string>
+    <string name="home_question_otp_subtitle">%1$d ऐप्स के पास SMS और इंटरनेट की अनुमति है</string>
+    <string name="home_question_background_title">बैकग्राउंड में मुझ पर कौन नज़र रख सकता है?</string>
+    <string name="home_question_background_subtitle">%1$d ऐप्स के पास कैमरा/माइक और बैकग्राउंड एक्सेस है</string>
+    <string name="home_question_screen_title">मेरी स्क्रीन कौन नियंत्रित कर सकता है?</string>
+    <string name="home_question_screen_subtitle">%1$d ऐप्स के पास एक्सेसिबिलिटी या ओवरले चालू है</string>
+
+    <string name="home_device_grade_title">डिवाइस जोखिम स्तर</string>
+    <string name="home_scan_now">अभी स्कैन करें</string>
+    <string name="home_scanning">स्थापित ऐप्स स्कैन हो रहे हैं…</string>
+    <string name="home_scanned_stats">%1$d ऐप्स %2$.1f सेकंड में स्कैन किए गए — पूरी तरह डिवाइस पर</string>
+    <string name="home_tap_to_scan">अपने इंस्टॉल किए गए ऐप्स को स्कैन करें</string>
+    <string name="home_last_scan">अंतिम स्कैन: %1$s</string>
+    <string name="home_panic_button">क्या मुझे ठगा जा रहा है?</string>
+
+    <!-- Grandparent Mode Home -->
+    <string name="gp_home_question">क्या आपका फोन सुरक्षित है?</string>
+    <string name="gp_status_safe">आपका फोन सुरक्षित है</string>
+    <string name="gp_status_medium">कुछ जांचें आवश्यक हैं</string>
+    <string name="gp_status_high">ध्यान देने की आवश्यकता है</string>
+    <string name="gp_status_critical">तुरंत कार्रवाई करें</string>
+
+    <!-- App List Screen -->
+    <string name="list_title">स्थापित ऐप्स</string>
+    <string name="list_search_hint">ऐप के नाम से खोजें…</string>
+    <string name="list_filter_all">सभी</string>
+    <string name="list_filter_critical">अति गंभीर</string>
+    <string name="list_filter_high">गंभीर</string>
+    <string name="list_filter_dormant">निष्क्रिय</string>
+    <string name="list_filter_sideloaded">बाहरी ऐप</string>
+    <string name="list_filter_mismatch">असंगत</string>
+    <string name="list_filter_creep">नई अनुमति</string>
+    <string name="list_sort_label">क्रमबद्ध करें</string>
+    <string name="list_sort_risk">जोखिम स्कोर</string>
+    <string name="list_sort_name">नाम</string>
+    <string name="list_sort_date">इंस्टॉल तिथि</string>
+    <string name="list_sort_dormant">अप्रयुक्त दिन</string>
+    <string name="list_system_apps_toggle">सिस्टम ऐप्स शामिल करें</string>
+    <string name="list_empty">आपकी शर्तों से मेल खाने वाला कोई ऐप नहीं मिला</string>
+
+    <!-- Trust Badges -->
+    <string name="trust_verified">Play Store</string>
+    <string name="trust_system">सिस्टम इंस्टाल</string>
+    <string name="trust_preinstalled">पहले से इंस्टॉल</string>
+    <string name="trust_sideloaded">बाहर से लोड ⚠️</string>
+    <string name="trust_unknown">अज्ञात स्रोत</string>
+
+    <!-- Risk Bands -->
+    <string name="band_low">कम</string>
+    <string name="band_medium">मध्यम</string>
+    <string name="band_high">उच्च</string>
+    <string name="band_critical">गंभीर</string>
+
+    <!-- App Detail Screen -->
+    <string name="detail_title">ऐप जोखिम प्रोफ़ाइल</string>
+    <string name="detail_installed_on">इंस्टॉल किया: %1$s</string>
+    <string name="detail_updated_on">अपडेट किया: %1$s</string>
+    <string name="detail_target_sdk_warning">⚠️ पुराना SDK %1$d उपयोग करता है (आधुनिक सुरक्षा सुरक्षा को बाईपास करता है)</string>
+
+    <!-- Safe to Keep Verdicts -->
+    <string name="verdict_safe_title">✅ सुरक्षित प्रतीत होता है</string>
+    <string name="verdict_safe_desc">यह ऐप सामान्य अनुमतियां मांगता है और कोई हानिकारक पैटर्न नहीं दिखाता।</string>
+    <string name="verdict_checking_title">⚠️ जांच के योग्य</string>
+    <string name="verdict_checking_desc">इस ऐप के पास मध्यम पहुंच है। पुष्टि करें कि क्या आप वास्तव में इसकी सभी क्षमताओं का उपयोग करते हैं।</string>
+    <string name="verdict_attention_title">🔶 ध्यान देने की आवश्यकता</string>
+    <string name="verdict_attention_desc">यह ऐप संवेदनशील एक्सेस या असामान्य बैकग्राउंड क्षमताएं रखता है। सावधानी से जांचें।</string>
+    <string name="verdict_act_now_title">🚨 तुरंत कार्रवाई करें</string>
+    <string name="verdict_act_now_desc">कई उच्च जोखिम क्षमताएं पाई गईं। तुरंत हटाने या अनुमतियां बंद करने की सलाह दी जाती है।</string>
+
+    <!-- Capability Grid (9 Categories) -->
+    <string name="cat_special_access">विशेष अधिकार</string>
+    <string name="cat_sms">SMS संदेश</string>
+    <string name="cat_contacts_calls">संपर्क और कॉल</string>
+    <string name="cat_camera_mic">कैमरा और माइक</string>
+    <string name="cat_location">स्थान (GPS)</string>
+    <string name="cat_phone_identity">फोन पहचान</string>
+    <string name="cat_storage">स्टोरेज और फोटो</string>
+    <string name="cat_background">बैकग्राउंड एक्सेस</string>
+    <string name="cat_network">नेटवर्क और इंटरनेट</string>
+
+    <!-- Category Statuses -->
+    <string name="status_granted">स्वीकृत</string>
+    <string name="status_declared_only">केवल घोषित</string>
+    <string name="status_not_requested">नहीं मांगा</string>
+    <string name="status_unable_to_check">जांच में असमर्थ</string>
+
+    <!-- Category Analogies -->
+    <string name="analogy_special_access">जैसे किसी अजनबी को आपके फोन की आंखें और हाथ देना।</string>
+    <string name="analogy_sms">जैसे कोई आपके बैंक के सभी पत्र खोले।</string>
+    <string name="analogy_contacts_calls">जैसे अपनी पूरी डायरी किसी अजनबी को देना।</string>
+    <string name="analogy_camera_mic">जैसे कोई कभी भी आपका कैमरा चालू करे।</string>
+    <string name="analogy_location">जैसे कोई हमेशा जाने आप कहां हैं।</string>
+    <string name="analogy_phone_identity">जैसे कोई आपका नंबर और पहचान जाने।</string>
+    <string name="analogy_storage">जैसे कोई आपकी सभी फोटो और फाइलें पढ़े।</string>
+    <string name="analogy_background">जैसे कोई घर में रहे चाहे आप जाएं या नहीं।</string>
+    <string name="analogy_network">जैसे एक खुला लेटरबॉक्स जिसमें कोई भी डाल सके।</string>
+
+    <!-- Permission Glossary Sheet -->
+    <string name="glossary_title">अनुमति विवरण</string>
+    <string name="glossary_analogy_header">सरल उदाहरण</string>
+    <string name="glossary_status_header">फोन पर वर्तमान स्थिति</string>
+    <string name="glossary_declared_permissions">मांगी गई व्यक्तिगत अनुमतियां</string>
+    <string name="glossary_close">बंद करें</string>
+
+    <!-- Score Waterfall -->
+    <string name="waterfall_title">स्कोर की गणना कैसे की गई</string>
+    <string name="waterfall_toggle_show">गणना विवरण देखें ▼</string>
+    <string name="waterfall_toggle_hide">गणना विवरण छुपाएं ▲</string>
+    <string name="waterfall_total">कुल परिकलित स्कोर: %1$d/100</string>
+
+    <!-- Threat Narratives -->
+    <string name="threat_patterns_title">पहचाने गए जोखिम पैटर्न</string>
+    <string name="mitre_ref">संदर्भ: MITRE %1$s</string>
+
+    <!-- Why Flagged Section -->
+    <string name="why_flagged_title">इस ऐप को क्यों चिह्नित किया गया</string>
+    <string name="what_app_can_do_title">यह ऐप क्या कर सकता है</string>
+
+    <!-- Alerts -->
+    <string name="creep_alert_title">⚠️ अनुमतियों में गुप्त वृद्धि पाई गई</string>
+    <string name="creep_alert_desc">%1$d दिन पहले अपडेट हुआ — चुपचाप नई अनुमतियां ली गईं: %2$s</string>
+    <string name="dormant_alert_title">💤 निष्क्रिय ऐप का जोखिम</string>
+    <string name="dormant_alert_desc">%1$d दिनों से अप्रयुक्त — फिर भी इसके पास संवेदनशील एक्सेस है (%2$s)</string>
+    <string name="dormant_review_action">एक्सेस की समीक्षा करें</string>
+    <string name="context_mismatch_badge">असंगत अनुमति</string>
+    <string name="context_mismatch_desc">उपयोगिता ऐप (जैसे टॉर्च या कैलकुलेटर) जो अत्यधिक व्यक्तिगत अनुमतियां रखता है।</string>
+
+    <!-- Detail Actions -->
+    <string name="action_open_settings">ऐप सेटिंग्स खोलें</string>
+    <string name="action_uninstall">ऐप अनइंस्टॉल करें</string>
+    <string name="action_get_help">इस ऐप के लिए मदद लें</string>
+    <string name="help_share_message">मेरे फोन पर इस ऐप को जांचने में मदद चाहिए: %1$s। एक सुरक्षा ऐप ने इसे चिह्नित किया है। क्या आप देख सकते हैं?</string>
+
+    <!-- Scan Coverage Footer -->
+    <string name="coverage_title">स्कैन कवरेज और सत्यापन</string>
+    <string name="coverage_accessibility">एक्सेसिबिलिटी सेवाएं: सत्यापित</string>
+    <string name="coverage_admin">डिवाइस एडमिन अधिकार: सत्यापित</string>
+    <string name="coverage_overlay">स्क्रीन ओवरले: केवल घोषित (लाइव स्थिति प्रतिबंधित)</string>
+    <string name="coverage_listeners">सूचना श्रोता (Notification): सत्यापित</string>
+
+    <!-- Panic Screen -->
+    <string name="panic_title">पैनिक ऑडिट: क्या मुझे ठगा जा रहा है?</string>
+    <string name="panic_subtitle">रिमोट कंट्रोल, सक्रिय जालसाजी और हालिया खतरों की रीयल-टाइम जांच</string>
+    <string name="panic_running">वास्तविक समय में डिवाइस की जांच की जा रही है…</string>
+    <string name="panic_check_remote">1. रिमोट कंट्रोल / स्क्रीन शेयरिंग ऐप्स की जांच</string>
+    <string name="panic_check_recent_access">2. हाल ही में स्थापित ऐप्स जिनमें एक्सेसिबिलिटी/ओवरले है</string>
+    <string name="panic_check_sideloaded">3. पिछले 24 घंटों में बाहर से इंस्टॉल किए गए ऐप्स</string>
+    <string name="panic_check_overlay">4. सक्रिय स्क्रीन ओवरले और धोखाधड़ी वाले इनपुट जाल की जांच</string>
+    <string name="panic_check_upi">5. बैंकिंग ऐप्स के खिलाफ SMS और सूचना चोरी की जांच</string>
+
+    <string name="panic_verdict_safe">🟢 कोई सक्रिय धोखाधड़ी संकेत नहीं मिला</string>
+    <string name="panic_verdict_concern">🟡 एक चिंता का विषय मिला — नीचे समीक्षा करें</string>
+    <string name="panic_verdict_warning">🔴 चेतावनी: संभावित धोखाधड़ी गतिविधि — तुरंत कार्रवाई करें</string>
+    <string name="panic_share_action">यह चेतावनी साझा करें</string>
+    <string name="panic_share_safe_msg">ऐप-अनुमान पैनिक ऑडिट परिणाम: मेरे फोन पर कोई सक्रिय धोखाधड़ी टूल या रिमोट एक्सेस ऐप नहीं पाया गया।</string>
+    <string name="panic_share_warning_msg">⚠️ ऐप-अनुमान चेतावनी: मेरे फोन पर संदिग्ध धोखाधड़ी या स्क्रीन नियंत्रण गतिविधि चिह्नित की गई है! विवरण: %1$s</string>
+
+    <!-- Dormant Danger Screen -->
+    <string name="dormant_screen_title">निष्क्रिय खतरा</string>
+    <string name="dormant_summary_card">%1$d ऐप्स के पास 30+ दिनों से बिना खोले संवेदनशील एक्सेस बना हुआ है।</string>
+    <string name="dormant_days_unused">%1$d दिन अप्रयुक्त</string>
+    <string name="dormant_danger_perms">%1$d संवेदनशील अनुमतियां</string>
+    <string name="dormant_cleanup_button">समीक्षा / हटाएं</string>
+    <string name="dormant_empty">खतरनाक अनुमतियों वाला कोई निष्क्रिय ऐप नहीं मिला!</string>
+
+    <!-- Share Screen -->
+    <string name="share_screen_title">सुरक्षा रिपोर्ट साझा करें</string>
+    <string name="share_card_header">पारिवारिक रिपोर्ट पूर्वावलोकन</string>
+    <string name="share_privacy_note">🔒 केवल ऊपर दिया गया सारांश साझा किया जाएगा। आपका पूरा स्कैन डेटा आपके फोन में सुरक्षित रहेगा।</string>
+    <string name="share_button_label">WhatsApp / संदेश द्वारा साझा करें</string>
+
+    <!-- About Screen -->
+    <string name="about_title">ऐप-अनुमान सुरक्षा के बारे में</string>
+    <string name="about_quote">“जो ऐप सुरक्षा का ऑडिट करता है, उसे अपने स्वयं के ऑडिट में पास होना चाहिए।”</string>
+    <string name="about_self_score">सेल्फ-ऑडिट स्कोर: %1$d/100 (कम जोखिम ✅)</string>
+    <string name="about_self_desc">ऐप-अनुमान अपने स्वयं के ऑडिट परिणामों में दिखाई देता है और 0 खतरनाक अनुमतियों के साथ 10 से कम स्कोर करता है।</string>
+
+    <string name="about_perms_title">हम कौन सी अनुमतियों का उपयोग करते हैं</string>
+    <string name="about_perms_desc">स्थापित ऐप्स की सूची के लिए QUERY_ALL_PACKAGES, और निष्क्रिय खतरों का पता लगाने के लिए PACKAGE_USAGE_STATS। इंटरनेट की अनुमति शून्य है।</string>
+
+    <string name="about_storage_title">डिवाइस पर संग्रहीत डेटा</string>
+    <string name="about_storage_desc">भाषा और मोड प्राथमिकताएं, साथ ही अपडेट अंतर का पता लगाने के लिए एन्क्रिप्टेड अनुमति स्नैपशॉट। सभी स्कैन केवल मेमोरी में होते हैं।</string>
+
+    <string name="about_online_title">ऑनलाइन भेजा गया डेटा</string>
+    <string name="about_online_desc">कुछ भी नहीं। कभी नहीं। ऐप-अनुमान में कोई नेटवर्क लाइब्रेरी नहीं है और कोई बाहरी कनेक्शन नहीं बनता।</string>
+
+    <string name="about_security_title">सुरक्षा उपाय</string>
+    <string name="about_security_desc">FLAG_SECURE सक्रिय (स्क्रीनशॉट और स्क्रीन रिकॉर्डिंग रोकता है), debuggable=false, allowBackup=false, cleartextTrafficPermitted=false।</string>
+
+    <string name="about_version_title">इंजन और बिल्ड</string>
+    <string name="about_version_desc">स्कैन इंजन v1.0.0-ऑफलाइन • हस्ताक्षरित रिलीज़ बिल्ड</string>
+
+    <!-- Live Monitor & Notification Strings -->
+    <string name="notif_channel_name">ऐप जोखिम अलर्ट</string>
+    <string name="notif_channel_desc">नई स्थापित ऐप्स द्वारा सुरक्षा जोखिम पैदा करने पर सूचनाएं</string>
+    <string name="notif_flagged_title">नया ऐप चिह्नित — %s</string>
+    <string name="notif_flagged_body">जोखिम: %s। समीक्षा के लिए टैप करें।</string>
+    <string name="notif_sideloaded_body">अज्ञात स्रोत से स्थापित ऐप में %s एक्सेस पाई गई।</string>
 </resources>

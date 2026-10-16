@@ -19,6 +19,10 @@ enum class PermissionState {
     GRANTED, DECLARED_ONLY, NOT_REQUESTED, UNABLE_TO_CHECK
 }
 
+enum class SpecialAccessState {
+    ENABLED, NOT_ENABLED, ACTIVE, NOT_ACTIVE, GRANTED, NOT_GRANTED, DECLARED_ONLY, UNABLE_TO_CHECK, UNKNOWN
+}
+
 data class PermissionInfo(
     val permissionName: String,
     val category: PermissionCategory,
@@ -33,13 +37,21 @@ data class CategoryResult(
 )
 
 data class SpecialAccessResult(
-    val accessibilityEnabled: PermissionState,
-    val deviceAdminActive: PermissionState,
-    val notificationListenerEnabled: PermissionState,
-    val overlayState: PermissionState,
-    val installPackagesState: PermissionState,
-    val enabledAccessibilityServices: List<String>,
-    val activeDeviceAdmins: List<String>
+    val accessibilityEnabled: PermissionState = PermissionState.NOT_REQUESTED,
+    val deviceAdminActive: PermissionState = PermissionState.NOT_REQUESTED,
+    val notificationListenerEnabled: PermissionState = PermissionState.NOT_REQUESTED,
+    val overlayState: PermissionState = PermissionState.NOT_REQUESTED,
+    val installPackagesState: PermissionState = PermissionState.NOT_REQUESTED,
+    val enabledAccessibilityServices: List<String> = emptyList(),
+    val activeDeviceAdmins: List<String> = emptyList()
+)
+
+data class SpecialAccessInfo(
+    val accessibilityEnabled: SpecialAccessState = SpecialAccessState.NOT_ENABLED,
+    val deviceAdminActive: SpecialAccessState = SpecialAccessState.NOT_ACTIVE,
+    val notificationListenerEnabled: SpecialAccessState = SpecialAccessState.NOT_ENABLED,
+    val overlayState: SpecialAccessState = SpecialAccessState.NOT_GRANTED,
+    val installPackagesState: SpecialAccessState = SpecialAccessState.NOT_GRANTED
 )
 
 data class ScoringFinding(
@@ -62,7 +74,8 @@ data class AttackChain(
 )
 
 data class ThreatNarrative(
-    val chainId: AttackChainId,
+    val chainId: AttackChainId = AttackChainId.OTP_STEALER,
+    val chainIdStr: String = chainId.name,
     val title_en: String,
     val title_hi: String,
     val body_en: String,
@@ -70,36 +83,64 @@ data class ThreatNarrative(
     val analogy_en: String,
     val analogy_hi: String,
     val mitre_ref: String,
-    val severity: RiskBand
-)
+    val severity: RiskBand = RiskBand.LOW
+) {
+    constructor(
+        chainId: String,
+        title_en: String,
+        title_hi: String,
+        body_en: String,
+        body_hi: String,
+        analogy_en: String,
+        analogy_hi: String,
+        mitre_ref: String,
+        severity: String
+    ) : this(
+        chainId = try { AttackChainId.valueOf(chainId) } catch (e: Exception) { AttackChainId.OTP_STEALER },
+        chainIdStr = chainId,
+        title_en = title_en,
+        title_hi = title_hi,
+        body_en = body_en,
+        body_hi = body_hi,
+        analogy_en = analogy_en,
+        analogy_hi = analogy_hi,
+        mitre_ref = mitre_ref,
+        severity = try { RiskBand.valueOf(severity) } catch (e: Exception) { RiskBand.LOW }
+    )
+}
 
 data class AppRiskProfile(
     val label: String,
     val packageName: String,
-    val versionName: String,
-    val firstInstallTime: Long,
-    val lastUpdateTime: Long,
-    val installerPackageName: String?,
-    val targetSdkVersion: Int,
-    val installerTrust: InstallerTrust,
-    val declaredPermissions: List<PermissionInfo>,
-    val grantedPermissions: List<PermissionInfo>,
-    val categoryMap: Map<PermissionCategory, CategoryResult>,
-    val specialAccess: SpecialAccessResult,
-    val riskScore: Int,
-    val riskBand: RiskBand,
-    val scoringFindings: List<ScoringFinding>,
-    val triggeredChains: List<AttackChain>,
-    val threatNarratives: List<ThreatNarrative>,
-    val contextMismatch: Boolean,
-    val permissionCreepFlag: Boolean,
-    val addedPermissions: List<String>,
-    val daysUnused: Int?,
-    val isDormant: Boolean,
-    val isRemoteAccessApp: Boolean,
-    val whyFlagged: List<String>,
-    val icon: Bitmap?
-)
+    val versionName: String = "1.0.0",
+    val versionCode: Long = 1L,
+    val firstInstallTime: Long = 0L,
+    val lastUpdateTime: Long = 0L,
+    val installerPackageName: String? = null,
+    val targetSdkVersion: Int = 34,
+    val installerTrust: InstallerTrust = InstallerTrust.UNKNOWN,
+    val declaredPermissions: List<PermissionInfo> = emptyList(),
+    val grantedPermissions: List<PermissionInfo> = emptyList(),
+    val categoryMap: Map<PermissionCategory, CategoryResult> = emptyMap(),
+    val specialAccess: SpecialAccessResult = SpecialAccessResult(),
+    val riskScore: Int = 0,
+    val riskBand: RiskBand = RiskBand.LOW,
+    val scoringFindings: List<ScoringFinding> = emptyList(),
+    val triggeredChains: List<AttackChain> = emptyList(),
+    val threatNarratives: List<ThreatNarrative> = emptyList(),
+    val contextMismatch: Boolean = false,
+    val mismatchSeverity: String? = null,
+    val permissionCreepFlag: Boolean = false,
+    val addedPermissions: List<String> = emptyList(),
+    val daysUnused: Int? = 0,
+    val isDormant: Boolean = false,
+    val isRemoteAccessApp: Boolean = false,
+    val whyFlagged: List<String> = emptyList(),
+    val icon: Bitmap? = null
+) {
+    val score: Int get() = riskScore
+    val waterfall: List<ScoringFinding> get() = scoringFindings
+}
 
 data class DeviceRiskSummary(
     val deviceScore: Int,

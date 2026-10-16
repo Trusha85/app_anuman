@@ -1,0 +1,1276 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>App-Anuman UI Preview</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Noto+Sans+Devanagari:wght@400;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --band-low: #2E7D32;
+      --band-medium: #E65100;
+      --band-high: #C62828;
+      --band-critical: #4A148C;
+      --panic-red: #B71C1C;
+      --bg-dark: #0B132B;
+      --phone-bg: #0F172A;
+      --card-bg: #1E293B;
+      --surface-variant: #334155;
+      --text-main: #F8FAFC;
+      --text-muted: #94A3B8;
+      --primary: #38BDF8;
+      --primary-container: #0369A1;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+      background: radial-gradient(circle at 50% 20%, #1e293b 0%, #0b132b 100%);
+      color: var(--text-main);
+      font-family: 'Plus Jakarta Sans', 'Noto Sans Devanagari', -apple-system, sans-serif;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 24px 16px 48px;
+    }
+
+    header.preview-header {
+      text-align: center;
+      margin-bottom: 24px;
+      max-width: 600px;
+    }
+
+    .badge-bar {
+      display: inline-flex;
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+
+    .badge {
+      background: rgba(56, 189, 248, 0.15);
+      color: var(--primary);
+      padding: 4px 12px;
+      border-radius: 999px;
+      font-size: 13px;
+      font-weight: 600;
+      border: 1px solid rgba(56, 189, 248, 0.3);
+    }
+
+    .badge.tag {
+      background: rgba(46, 125, 50, 0.15);
+      color: #4ade80;
+      border-color: rgba(74, 222, 128, 0.3);
+    }
+
+    h1 {
+      font-size: 28px;
+      font-weight: 800;
+      letter-spacing: -0.5px;
+      margin-bottom: 6px;
+    }
+
+    p.subtitle {
+      color: var(--text-muted);
+      font-size: 15px;
+    }
+
+    /* Phone Shell Simulator */
+    .phone-container {
+      width: 100%;
+      max-width: 420px;
+      height: 860px;
+      background: var(--phone-bg);
+      border-radius: 44px;
+      box-shadow: 0 25px 60px -15px rgba(0, 0, 0, 0.7), 0 0 0 12px #1e293b, 0 0 0 14px #334155;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      position: relative;
+    }
+
+    /* Top Notch & Status Bar */
+    .status-bar {
+      height: 38px;
+      padding: 0 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-muted);
+      flex-shrink: 0;
+      background: var(--phone-bg);
+      z-index: 10;
+    }
+
+    .notch {
+      width: 110px;
+      height: 20px;
+      background: #000;
+      border-radius: 0 0 14px 14px;
+      margin: 0 auto;
+    }
+
+    /* App Top Bar */
+    .app-topbar {
+      height: 64px;
+      padding: 0 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: var(--phone-bg);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+      flex-shrink: 0;
+    }
+
+    .topbar-title {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 20px;
+      font-weight: 800;
+      color: var(--text-main);
+    }
+
+    .topbar-actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .btn-pill {
+      background: rgba(255, 255, 255, 0.08);
+      color: var(--text-main);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      border-radius: 8px;
+      padding: 6px 12px;
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .btn-pill:hover {
+      background: rgba(255, 255, 255, 0.15);
+    }
+
+    .btn-icon {
+      background: rgba(255, 255, 255, 0.05);
+      border: none;
+      color: var(--primary);
+      width: 38px;
+      height: 38px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+    }
+
+    /* Main Scrollable View Area */
+    .screen-viewport {
+      flex: 1;
+      overflow-y: auto;
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      scroll-behavior: smooth;
+    }
+
+    /* Cards */
+    .card {
+      background: var(--card-bg);
+      border-radius: 18px;
+      padding: 16px;
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+    }
+
+    .card.clickable {
+      cursor: pointer;
+      transition: transform 0.15s, background 0.15s;
+    }
+
+    .card.clickable:hover {
+      background: #25334d;
+      transform: translateY(-1px);
+    }
+
+    /* Question Cards */
+    .q-card {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      min-height: 80px;
+    }
+
+    .q-icon {
+      width: 48px;
+      height: 48px;
+      border-radius: 14px;
+      background: rgba(56, 189, 248, 0.15);
+      color: var(--primary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 22px;
+      flex-shrink: 0;
+    }
+
+    .q-info {
+      flex: 1;
+    }
+
+    .q-title {
+      font-size: 17px;
+      font-weight: 700;
+      color: var(--text-main);
+      margin-bottom: 3px;
+    }
+
+    .q-sub {
+      font-size: 14px;
+      color: var(--text-muted);
+    }
+
+    .q-arrow {
+      color: var(--text-muted);
+      font-size: 18px;
+    }
+
+    /* Risk Gauge */
+    .gauge-wrapper {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 8px 0;
+    }
+
+    .gauge-circle {
+      width: 170px;
+      height: 170px;
+      border-radius: 50%;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .gauge-grade {
+      font-size: 52px;
+      font-weight: 900;
+      line-height: 1;
+    }
+
+    .gauge-score {
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--text-muted);
+      margin-top: 4px;
+    }
+
+    .breakdown-row {
+      display: flex;
+      justify-content: space-around;
+      width: 100%;
+      margin-top: 14px;
+      padding-top: 12px;
+      border-top: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    .metric-col {
+      text-align: center;
+    }
+
+    .metric-num {
+      font-size: 18px;
+      font-weight: 800;
+    }
+
+    .metric-lbl {
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+
+    /* Buttons */
+    .btn-primary {
+      width: 100%;
+      height: 60px;
+      background: var(--primary);
+      color: #0f172a;
+      border: none;
+      border-radius: 16px;
+      font-size: 18px;
+      font-weight: 700;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      transition: all 0.2s;
+    }
+
+    .btn-primary:hover {
+      filter: brightness(1.1);
+    }
+
+    .btn-panic {
+      width: 100%;
+      height: 60px;
+      background: var(--panic-red);
+      color: #fff;
+      border: none;
+      border-radius: 16px;
+      font-size: 18px;
+      font-weight: 800;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      box-shadow: 0 8px 24px rgba(183, 28, 28, 0.4);
+      transition: transform 0.15s;
+    }
+
+    .btn-panic:hover {
+      transform: scale(0.99);
+    }
+
+    /* Bottom Nav Bar */
+    .bottom-nav {
+      height: 68px;
+      background: var(--card-bg);
+      border-top: 1px solid rgba(255, 255, 255, 0.06);
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+      flex-shrink: 0;
+      z-index: 10;
+    }
+
+    .nav-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+      color: var(--text-muted);
+      cursor: pointer;
+      font-size: 12px;
+      font-weight: 600;
+      padding: 6px 12px;
+      border-radius: 12px;
+      transition: all 0.2s;
+    }
+
+    .nav-item.active {
+      color: var(--primary);
+    }
+
+    .nav-item .icon {
+      font-size: 20px;
+    }
+
+    /* Filter Chips */
+    .chips-row {
+      display: flex;
+      gap: 8px;
+      overflow-x: auto;
+      padding-bottom: 4px;
+      scrollbar-width: none;
+    }
+
+    .chip {
+      background: rgba(255, 255, 255, 0.08);
+      color: var(--text-main);
+      padding: 6px 14px;
+      border-radius: 999px;
+      font-size: 13px;
+      font-weight: 600;
+      white-space: nowrap;
+      cursor: pointer;
+      border: 1px solid transparent;
+    }
+
+    .chip.active {
+      background: var(--primary-container);
+      color: #fff;
+      border-color: var(--primary);
+    }
+
+    /* Capability 3x3 Grid */
+    .grid-3x3 {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+    }
+
+    .grid-cell {
+      background: var(--card-bg);
+      border-radius: 12px;
+      padding: 10px 6px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      gap: 6px;
+      cursor: pointer;
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      transition: background 0.15s;
+    }
+
+    .grid-cell:hover {
+      background: #25334d;
+    }
+
+    .cell-icon {
+      font-size: 24px;
+    }
+
+    .cell-name {
+      font-size: 12px;
+      font-weight: 600;
+      line-height: 1.2;
+    }
+
+    .status-badge {
+      font-size: 10px;
+      font-weight: 700;
+      padding: 2px 6px;
+      border-radius: 4px;
+      width: 100%;
+    }
+
+    .status-granted {
+      background: var(--band-high);
+      color: #fff;
+    }
+
+    .status-declared {
+      border: 1px solid var(--band-medium);
+      color: var(--band-medium);
+    }
+
+    .status-none {
+      background: var(--surface-variant);
+      color: var(--text-muted);
+    }
+
+    /* Waterfall Bar */
+    .waterfall-row {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      margin-bottom: 10px;
+    }
+
+    .waterfall-header {
+      display: flex;
+      justify-content: space-between;
+      font-size: 14px;
+      font-weight: 600;
+    }
+
+    .bar-bg {
+      height: 6px;
+      background: var(--surface-variant);
+      border-radius: 3px;
+      overflow: hidden;
+    }
+
+    .bar-fill {
+      height: 100%;
+      border-radius: 3px;
+    }
+
+    /* Bottom Sheet Modal Simulator */
+    .modal-overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.7);
+      display: none;
+      align-items: flex-end;
+      z-index: 99;
+      animation: fadeIn 0.2s;
+    }
+
+    .modal-sheet {
+      width: 100%;
+      background: #1e293b;
+      border-radius: 28px 28px 0 0;
+      padding: 20px;
+      box-shadow: 0 -10px 40px rgba(0, 0, 0, 0.5);
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .sheet-handle {
+      width: 44px;
+      height: 5px;
+      background: #475569;
+      border-radius: 99px;
+      align-self: center;
+      margin-bottom: 6px;
+    }
+
+    /* Grandparent Mode Typography Overrides */
+    .mode-grandparent .q-title,
+    .mode-grandparent .topbar-title {
+      font-size: 24px !important;
+    }
+    .mode-grandparent p,
+    .mode-grandparent .subtitle {
+      font-size: 18px !important;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+  </style>
+</head>
+<body>
+
+  <header class="preview-header">
+    <div class="badge-bar">
+      <span class="badge">Kotlin + Jetpack Compose</span>
+      <span class="badge tag">Target API 29+</span>
+      <span class="badge tag">Offline Security</span>
+    </div>
+    <h1>App-Anuman Live Screen Inspector</h1>
+    <p class="subtitle">Interactive prototype of the 7 UI screens, 3 user modes & Hindi/English localization</p>
+  </header>
+
+  <!-- Interactive Phone Frame -->
+  <div class="phone-container" id="phoneContainer">
+
+    <!-- Status Bar -->
+    <div class="status-bar">
+      <span>14:48</span>
+      <div class="notch"></div>
+      <span>5G 📶 98%</span>
+    </div>
+
+    <!-- App Top Bar -->
+    <div class="app-topbar">
+      <div class="topbar-title" id="screenTitle">
+        <span>🛡️</span>
+        <span id="titleText">App-Anuman</span>
+      </div>
+      <div class="topbar-actions">
+        <button class="btn-pill" id="langToggleBtn" onclick="toggleLanguage()">हिं</button>
+        <button class="btn-icon" onclick="openModeSheet()" title="Switch Presentation Mode">⚙️</button>
+      </div>
+    </div>
+
+    <!-- Scrollable Screen Content -->
+    <div class="screen-viewport" id="viewport">
+      <!-- Dynamic Screen Content Injected Here via JavaScript -->
+    </div>
+
+    <!-- Bottom Navigation Bar -->
+    <div class="bottom-nav">
+      <div class="nav-item active" onclick="switchTab('home')" id="navHome">
+        <span class="icon">🏠</span>
+        <span id="lblNavHome">Home</span>
+      </div>
+      <div class="nav-item" onclick="switchTab('apps')" id="navApps">
+        <span class="icon">📱</span>
+        <span id="lblNavApps">Apps</span>
+      </div>
+      <div class="nav-item" onclick="switchTab('dormant')" id="navDormant">
+        <span class="icon">💤</span>
+        <span id="lblNavDormant">Dormant</span>
+      </div>
+      <div class="nav-item" onclick="switchTab('about')" id="navAbout">
+        <span class="icon">ℹ️</span>
+        <span id="lblNavAbout">About</span>
+      </div>
+    </div>
+
+    <!-- Mode Selector Bottom Sheet Modal -->
+    <div class="modal-overlay" id="modeModal" onclick="closeModeSheet(event)">
+      <div class="modal-sheet" onclick="event.stopPropagation()">
+        <div class="sheet-handle"></div>
+        <h3 id="modeSheetTitle" style="font-size: 20px; font-weight: 800;">Select Presentation Mode</h3>
+        
+        <div class="card clickable" onclick="setMode('SIMPLE')">
+          <div style="font-weight: 700; font-size: 17px; color: var(--primary);">Simple Mode (Default)</div>
+          <div style="font-size: 14px; color: var(--text-muted); margin-top: 4px;">Plain language, everyday analogies, no technical jargon</div>
+        </div>
+
+        <div class="card clickable" onclick="setMode('DETAILED')">
+          <div style="font-weight: 700; font-size: 17px; color: #4ade80;">Detailed Mode</div>
+          <div style="font-size: 14px; color: var(--text-muted); margin-top: 4px;">Full technical metrics, MITRE ATT&CK refs, and rule IDs</div>
+        </div>
+
+        <div class="card clickable" onclick="setMode('GRANDPARENT')">
+          <div style="font-weight: 700; font-size: 17px; color: #fbbf24;">Grandparent Mode</div>
+          <div style="font-size: 14px; color: var(--text-muted); margin-top: 4px;">Extra-large text, 3 simple colors, and one-tap family help</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Permission Glossary Sheet Modal -->
+    <div class="modal-overlay" id="glossaryModal" onclick="closeGlossarySheet(event)">
+      <div class="modal-sheet" onclick="event.stopPropagation()">
+        <div class="sheet-handle"></div>
+        <h3 id="glossaryTitle" style="font-size: 22px; font-weight: 800;">Special Access</h3>
+        <div class="card" style="background: rgba(56, 189, 248, 0.15); border-color: rgba(56, 189, 248, 0.3);">
+          <div style="font-size: 13px; font-weight: 700; color: var(--primary); margin-bottom: 4px;">PLAIN ANALOGY</div>
+          <div id="glossaryAnalogy" style="font-style: italic; font-size: 16px;">“Like giving a stranger your phone's eyes and hands.”</div>
+        </div>
+        <div style="font-size: 14px; color: var(--text-muted);">
+          Current Status: <b id="glossaryStatus" style="color: var(--band-high);">GRANTED</b>
+        </div>
+        <button class="btn-primary" style="height: 48px;" onclick="closeGlossary()">Close</button>
+      </div>
+    </div>
+
+  </div>
+
+  <script>
+    // State
+    let currentTab = 'home';
+    let currentMode = 'SIMPLE'; // SIMPLE | DETAILED | GRANDPARENT
+    let currentLang = 'EN';     // EN | HI
+    let selectedAppId = 'flash';
+
+    // Test Data matching Kotlin Data Models
+    const appsData = [
+      {
+        id: 'self',
+        name: 'App-Anuman',
+        pkg: 'com.appanuman',
+        score: 5,
+        band: 'LOW',
+        trust: 'Play Store',
+        trustColor: '#22c55e',
+        dormant: false,
+        mismatch: false,
+        creep: false,
+        why: 'No sensitive runtime permissions. Zero internet access. Verified on-device self-audit.',
+        why_hi: 'कोई संवेदनशील रनटाइम अनुमति नहीं। शून्य इंटरनेट एक्सेस। ऑन-डिवाइस स्व-लेखापरीक्षा।'
+      },
+      {
+        id: 'flash',
+        name: 'Flashlight Pro & Battery',
+        pkg: 'com.torch.flash.utility',
+        score: 82,
+        band: 'CRITICAL',
+        trust: 'Sideloaded ⚠️',
+        trustColor: '#ef4444',
+        dormant: false,
+        mismatch: true,
+        creep: false,
+        chain: 'CHAIN_OTP_STEALER',
+        mitre: 'T1412',
+        why: 'Can intercept SMS messages with bank OTPs. Automatically restarts on boot. Sideloaded from unknown browser.',
+        why_hi: 'बैंक OTP वाले SMS संदेश पढ़ सकता है। बूट होने पर खुद रीस्टार्ट होता है। अज्ञात ब्राउज़र से स्थापित।'
+      },
+      {
+        id: 'cleaner',
+        name: 'Quick Cleaner 2026',
+        pkg: 'com.fastcleaner.superbooster',
+        score: 85,
+        band: 'CRITICAL',
+        trust: 'Unknown Source',
+        trustColor: '#f97316',
+        dormant: false,
+        mismatch: false,
+        creep: false,
+        chain: 'CHAIN_OVERLAY_TRAP',
+        mitre: 'T1417',
+        why: 'Holds full Accessibility control over device UI and can draw fake overlay screens over banking apps.',
+        why_hi: 'डिवाइस पर पूर्ण एक्सेसिबिलिटी रखता है और बैंकिंग ऐप्स पर नकली स्क्रीन ओवरले खींच सकता है।'
+      },
+      {
+        id: 'recorder',
+        name: 'Call Recorder HD',
+        pkg: 'com.callrecorder.hdpro',
+        score: 78,
+        band: 'CRITICAL',
+        trust: 'Sideloaded ⚠️',
+        trustColor: '#ef4444',
+        dormant: false,
+        mismatch: false,
+        creep: false,
+        chain: 'CHAIN_SILENT_SPY',
+        mitre: 'T1418',
+        why: 'Active notification listener intercepts all OTP alerts while audio is recorded in background.',
+        why_hi: 'बैकग्राउंड में ऑडियो रिकॉर्ड करते हुए सभी सूचनाओं और OTP अलर्ट पर नज़र रखता है।'
+      },
+      {
+        id: 'anydesk',
+        name: 'AnyDesk Remote Control',
+        pkg: 'com.anydesk.anydeskandroid',
+        score: 80,
+        band: 'CRITICAL',
+        trust: 'Play Store',
+        trustColor: '#22c55e',
+        dormant: false,
+        mismatch: false,
+        creep: false,
+        chain: 'REMOTE_ACCESS_TOOL',
+        mitre: 'T1429',
+        why: 'High-risk remote screen sharing utility frequently used in impersonation scams.',
+        why_hi: 'धोखाधड़ी में अक्सर इस्तेमाल होने वाला हाई-रिस्क रिमोट स्क्रीन शेयरिंग टूल।'
+      },
+      {
+        id: 'taxi',
+        name: 'Old City Cabs',
+        pkg: 'com.oldcity.taxicab',
+        score: 65,
+        band: 'HIGH',
+        trust: 'Play Store',
+        trustColor: '#22c55e',
+        dormant: true,
+        daysUnused: 75,
+        mismatch: false,
+        creep: false,
+        why: 'Unused for 75 days, yet still maintains active 24/7 background location and SMS access.',
+        why_hi: '75 दिनों से अप्रयुक्त, फिर भी बैकग्राउंड लोकेशन और SMS एक्सेस बनाए रखता है।'
+      },
+      {
+        id: 'wallpaper',
+        name: 'Cute Wallpaper 4K',
+        pkg: 'com.cute.wallpaper.ultra',
+        score: 55,
+        band: 'HIGH',
+        trust: 'Play Store',
+        trustColor: '#22c55e',
+        dormant: false,
+        mismatch: true,
+        creep: true,
+        why: 'Recent update secretly added microphone recording. A wallpaper app has no legitimate need for mic.',
+        why_hi: 'हालिया अपडेट में चुपचाप माइक्रोफ़ोन रिकॉर्डिंग जोड़ी गई। वॉलपेपर ऐप को माइक की कोई आवश्यकता नहीं।'
+      },
+      {
+        id: 'calculator',
+        name: 'Calculator Plus',
+        pkg: 'com.smart.calculator.basic',
+        score: 8,
+        band: 'LOW',
+        trust: 'Play Store',
+        trustColor: '#22c55e',
+        dormant: false,
+        mismatch: false,
+        creep: false,
+        why: 'Requests zero sensitive runtime permissions and makes no outbound network connections.',
+        why_hi: 'कोई संवेदनशील अनुमति नहीं मांगता और शून्य बाहरी नेटवर्क कनेक्शन बनाता है।'
+      }
+    ];
+
+    const i18n = {
+      EN: {
+        app_name: 'App-Anuman',
+        nav_home: 'Home',
+        nav_apps: 'Apps',
+        nav_dormant: 'Dormant',
+        nav_about: 'About',
+        q1_title: 'Who can read my OTPs?',
+        q1_sub: '2 apps have SMS and Internet access',
+        q2_title: 'Who can watch me in the background?',
+        q2_sub: '2 apps have Camera/Mic and Background access',
+        q3_title: 'Who can control my screen?',
+        q3_sub: '3 apps have Accessibility or Overlay enabled',
+        device_grade: 'Device Risk Grade',
+        scan_now: 'Scan Now',
+        scanned_info: 'Scanned 8 apps in 1.2s — fully on-device',
+        panic_btn: 'Am I Being Scammed?',
+        gp_safe_title: 'Is Your Phone Safe?',
+        gp_safe_verdict: 'Your phone needs attention',
+        list_title: 'Installed Apps',
+        search_hint: 'Search apps by name…',
+        detail_title: 'App Risk Profile',
+        safe_to_keep: 'Safe to Keep?',
+        verdict_critical: '🚨 Act Now',
+        verdict_critical_desc: 'Multiple high-risk capabilities detected. Recommend restricting or uninstalling.',
+        what_app_can_do: 'What this app can do',
+        panic_title: 'Panic Audit: Am I Being Scammed?',
+        panic_verdict: '🔴 WARNING: Possible scam activity — act now',
+        dormant_title: 'Dormant Danger',
+        dormant_sub: '1 app has had access to Location & SMS for 75+ days without being opened.',
+        about_title: 'About App-Anuman Security',
+        self_audit_title: 'Self-Audit Score: 5/100 (LOW Band ✅)',
+        self_audit_quote: '“An app that audits security must pass its own audit.”'
+      },
+      HI: {
+        app_name: 'ऐप-अनुमान',
+        nav_home: 'होम',
+        nav_apps: 'ऐप्स',
+        nav_dormant: 'निष्क्रिय',
+        nav_about: 'सुरक्षा',
+        q1_title: 'मेरे OTP कौन पढ़ सकता है?',
+        q1_sub: '2 ऐप्स के पास SMS और इंटरनेट की अनुमति है',
+        q2_title: 'बैकग्राउंड में मुझ पर कौन नज़र रख सकता है?',
+        q2_sub: '2 ऐप्स के पास कैमरा/माइक और बैकग्राउंड एक्सेस है',
+        q3_title: 'मेरी स्क्रीन कौन नियंत्रित कर सकता है?',
+        q3_sub: '3 ऐप्स के पास एक्सेसिबिलिटी या ओवरले चालू है',
+        device_grade: 'डिवाइस जोखिम स्तर',
+        scan_now: 'अभी स्कैन करें',
+        scanned_info: '8 ऐप्स 1.2 सेकंड में स्कैन किए गए — पूरी तरह डिवाइस पर',
+        panic_btn: 'क्या मुझे ठगा जा रहा है?',
+        gp_safe_title: 'क्या आपका फोन सुरक्षित है?',
+        gp_safe_verdict: 'फोन पर ध्यान देने की आवश्यकता है',
+        list_title: 'स्थापित ऐप्स',
+        search_hint: 'ऐप के नाम से खोजें…',
+        detail_title: 'ऐप जोखिम प्रोफ़ाइल',
+        safe_to_keep: 'क्या यह ऐप सुरक्षित है?',
+        verdict_critical: '🚨 तुरंत कार्रवाई करें',
+        verdict_critical_desc: 'अति-गंभीर जोखिम क्षमताएं पाई गईं। तुरंत हटाने की सलाह दी जाती है।',
+        what_app_can_do: 'यह ऐप क्या कर सकता है',
+        panic_title: 'पैनिक ऑडिट: क्या मुझे ठगा जा रहा है?',
+        panic_verdict: '🔴 चेतावनी: संभावित धोखाधड़ी गतिविधि — तुरंत कार्रवाई करें',
+        dormant_title: 'निष्क्रिय खतरा',
+        dormant_sub: '1 ऐप के पास 75+ दिनों से बिना खोले लोकेशन और SMS एक्सेस बना हुआ है।',
+        about_title: 'ऐप-अनुमान सुरक्षा के बारे में',
+        self_audit_title: 'सेल्फ-ऑडिट स्कोर: 5/100 (कम जोखिम ✅)',
+        self_audit_quote: '“जो ऐप सुरक्षा का ऑडिट करता है, उसे अपने स्वयं के ऑडिट में पास होना चाहिए।”'
+      }
+    };
+
+    function t(key) {
+      return i18n[currentLang][key] || key;
+    }
+
+    function toggleLanguage() {
+      currentLang = currentLang === 'EN' ? 'HI' : 'EN';
+      document.getElementById('langToggleBtn').innerText = currentLang === 'EN' ? 'हिं' : 'EN';
+      renderCurrentScreen();
+    }
+
+    function openModeSheet() {
+      document.getElementById('modeModal').style.display = 'flex';
+    }
+
+    function closeModeSheet(e) {
+      document.getElementById('modeModal').style.display = 'none';
+    }
+
+    function setMode(mode) {
+      currentMode = mode;
+      document.getElementById('modeModal').style.display = 'none';
+      const container = document.getElementById('phoneContainer');
+      container.className = 'phone-container ' + (mode === 'GRANDPARENT' ? 'mode-grandparent' : '');
+      renderCurrentScreen();
+    }
+
+    function switchTab(tab) {
+      currentTab = tab;
+      document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+      const activeEl = document.getElementById('nav' + tab.charAt(0).toUpperCase() + tab.slice(1));
+      if (activeEl) activeEl.classList.add('active');
+      renderCurrentScreen();
+    }
+
+    function openAppDetail(appId) {
+      selectedAppId = appId;
+      currentTab = 'detail';
+      renderCurrentScreen();
+    }
+
+    function openPanicScreen() {
+      currentTab = 'panic';
+      renderCurrentScreen();
+    }
+
+    function openGlossary(cat) {
+      const analogies = {
+        'SPECIAL_ACCESS': {
+          title: currentLang === 'HI' ? 'विशेष अधिकार' : 'Special Access',
+          analogy: currentLang === 'HI' ? 'जैसे किसी अजनबी को आपके फोन की आंखें और हाथ देना।' : 'Like giving a stranger your phone\'s eyes and hands.'
+        },
+        'SMS': {
+          title: currentLang === 'HI' ? 'SMS संदेश' : 'SMS Messages',
+          analogy: currentLang === 'HI' ? 'जैसे कोई आपके बैंक के सभी पत्र खोले।' : 'Like letting someone open all your bank letters.'
+        },
+        'CAMERA': {
+          title: currentLang === 'HI' ? 'कैमरा और माइक' : 'Camera & Mic',
+          analogy: currentLang === 'HI' ? 'जैसे कोई कभी भी आपका कैमरा चालू करे।' : 'Like letting someone turn on your camera anytime.'
+        }
+      };
+
+      const item = analogies[cat] || analogies['SPECIAL_ACCESS'];
+      document.getElementById('glossaryTitle').innerText = item.title;
+      document.getElementById('glossaryAnalogy').innerText = `“${item.analogy}”`;
+      document.getElementById('glossaryModal').style.display = 'flex';
+    }
+
+    function closeGlossary() {
+      document.getElementById('glossaryModal').style.display = 'none';
+    }
+
+    function closeGlossarySheet() {
+      document.getElementById('glossaryModal').style.display = 'none';
+    }
+
+    // Render engine
+    function renderCurrentScreen() {
+      const vp = document.getElementById('viewport');
+      const titleText = document.getElementById('titleText');
+
+      // Update nav labels
+      document.getElementById('lblNavHome').innerText = t('nav_home');
+      document.getElementById('lblNavApps').innerText = t('nav_apps');
+      document.getElementById('lblNavDormant').innerText = t('nav_dormant');
+      document.getElementById('lblNavAbout').innerText = t('nav_about');
+
+      if (currentTab === 'home') {
+        titleText.innerText = t('app_name');
+        renderHome(vp);
+      } else if (currentTab === 'apps') {
+        titleText.innerText = t('list_title');
+        renderAppList(vp);
+      } else if (currentTab === 'detail') {
+        titleText.innerText = t('detail_title');
+        renderAppDetail(vp);
+      } else if (currentTab === 'panic') {
+        titleText.innerText = 'Panic Audit';
+        renderPanic(vp);
+      } else if (currentTab === 'dormant') {
+        titleText.innerText = t('dormant_title');
+        renderDormant(vp);
+      } else if (currentTab === 'about') {
+        titleText.innerText = t('about_title');
+        renderAbout(vp);
+      }
+    }
+
+    function renderHome(vp) {
+      if (currentMode === 'GRANDPARENT') {
+        vp.innerHTML = `
+          <div style="text-align: center; padding: 20px 0;">
+            <h2 style="font-size: 28px; font-weight: 800; margin-bottom: 24px;">${t('gp_safe_title')}</h2>
+            <div class="card" style="background: rgba(198, 40, 40, 0.15); border: 2px solid var(--band-high); padding: 36px 20px;">
+              <div style="font-size: 64px; margin-bottom: 12px;">⚠️</div>
+              <div style="font-size: 24px; font-weight: 800; color: var(--band-high);">${t('gp_safe_verdict')}</div>
+            </div>
+            <button class="btn-primary" style="height: 68px; font-size: 22px; margin-top: 28px;" onclick="simulateScan()">${t('scan_now')}</button>
+          </div>
+          <button class="btn-panic" onclick="openPanicScreen()">${t('panic_btn')}</button>
+        `;
+        return;
+      }
+
+      vp.innerHTML = `
+        <div style="font-size: 15px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px;">${t('device_grade')}</div>
+
+        <!-- Question Cards -->
+        <div class="card clickable q-card" onclick="switchTab('apps')">
+          <div class="q-icon">💬</div>
+          <div class="q-info">
+            <div class="q-title">${t('q1_title')}</div>
+            <div class="q-sub">${t('q1_sub')}</div>
+          </div>
+          <div class="q-arrow">→</div>
+        </div>
+
+        <div class="card clickable q-card" onclick="switchTab('apps')">
+          <div class="q-icon" style="background: rgba(168, 85, 247, 0.15); color: #c084fc;">👁️</div>
+          <div class="q-info">
+            <div class="q-title">${t('q2_title')}</div>
+            <div class="q-sub">${t('q2_sub')}</div>
+          </div>
+          <div class="q-arrow">→</div>
+        </div>
+
+        <div class="card clickable q-card" onclick="switchTab('apps')">
+          <div class="q-icon" style="background: rgba(239, 68, 68, 0.15); color: #f87171;">👆</div>
+          <div class="q-info">
+            <div class="q-title">${t('q3_title')}</div>
+            <div class="q-sub">${t('q3_sub')}</div>
+          </div>
+          <div class="q-arrow">→</div>
+        </div>
+
+        <!-- Risk Gauge -->
+        <div class="card gauge-wrapper">
+          <div class="gauge-circle" style="border: 14px solid var(--card-bg); border-top-color: var(--band-high); border-right-color: var(--band-high); border-left-color: var(--band-medium);">
+            <div class="gauge-grade" style="color: var(--band-high);">D</div>
+            <div class="gauge-score">72 / 100</div>
+          </div>
+          <div class="breakdown-row">
+            <div class="metric-col"><div class="metric-num" style="color: var(--band-critical);">4</div><div class="metric-lbl">Critical</div></div>
+            <div class="metric-col"><div class="metric-num" style="color: var(--band-high);">2</div><div class="metric-lbl">High</div></div>
+            <div class="metric-col"><div class="metric-num" style="color: var(--band-medium);">0</div><div class="metric-lbl">Medium</div></div>
+            <div class="metric-col"><div class="metric-num" style="color: var(--band-low);">2</div><div class="metric-lbl">Low</div></div>
+          </div>
+        </div>
+
+        <!-- Scan Button -->
+        <button class="btn-primary" onclick="simulateScan()">
+          <span>🔄</span>
+          <span>${t('scan_now')}</span>
+        </button>
+
+        <div style="text-align: center; font-size: 13px; color: var(--text-muted);">
+          ${t('scanned_info')}<br>
+          <span style="font-size: 11px;">Last scan: 14:48 Today</span>
+        </div>
+
+        <!-- Panic Button -->
+        <button class="btn-panic" onclick="openPanicScreen()">
+          <span>⚠️</span>
+          <span>${t('panic_btn')}</span>
+        </button>
+      `;
+    }
+
+    function renderAppList(vp) {
+      let html = `
+        <input type="text" placeholder="${t('search_hint')}" style="width: 100%; height: 50px; background: var(--card-bg); border: 1px solid rgba(255,255,255,0.1); border-radius: 14px; padding: 0 16px; color: #fff; font-size: 16px;" oninput="filterApps(this.value)">
+
+        <div class="chips-row">
+          <div class="chip active">All (8)</div>
+          <div class="chip">Critical (4)</div>
+          <div class="chip">High (2)</div>
+          <div class="chip">Dormant (1)</div>
+          <div class="chip">Sideloaded (2)</div>
+          <div class="chip">Mismatch (2)</div>
+        </div>
+      `;
+
+      appsData.forEach(app => {
+        const isGp = currentMode === 'GRANDPARENT';
+        const dotColor = app.score >= 50 ? 'var(--band-high)' : (app.score >= 25 ? 'var(--band-medium)' : 'var(--band-low)');
+
+        if (isGp) {
+          html += `
+            <div class="card clickable" style="display: flex; align-items: center; justify-content: space-between; min-height: 72px;" onclick="openAppDetail('${app.id}')">
+              <div style="display: flex; align-items: center; gap: 14px;">
+                <div style="font-size: 32px;">📱</div>
+                <div style="font-size: 22px; font-weight: 700;">${app.name}</div>
+              </div>
+              <div style="width: 24px; height: 24px; border-radius: 50%; background: ${dotColor};"></div>
+            </div>
+          `;
+        } else {
+          html += `
+            <div class="card clickable" style="display: flex; align-items: center; justify-content: space-between; min-height: 64px;" onclick="openAppDetail('${app.id}')">
+              <div style="display: flex; align-items: center; gap: 12px; flex: 1;">
+                <div style="width: 44px; height: 44px; border-radius: 12px; background: rgba(255,255,255,0.06); display: flex; align-items: center; justify-content: center; font-size: 22px;">📱</div>
+                <div>
+                  <div style="font-size: 17px; font-weight: 700;">${app.name}</div>
+                  <div style="display: flex; gap: 6px; margin-top: 4px; flex-wrap: wrap;">
+                    <span style="font-size: 11px; padding: 2px 6px; border-radius: 4px; background: rgba(255,255,255,0.08); color: ${app.trustColor}; font-weight: 600;">${app.trust}</span>
+                    ${app.mismatch ? '<span style="font-size: 11px; padding: 2px 6px; border-radius: 4px; background: rgba(239, 68, 68, 0.2); color: #f87171; font-weight: 700;">Mismatch</span>' : ''}
+                    ${app.creep ? '<span style="font-size: 11px; padding: 2px 6px; border-radius: 4px; background: rgba(249, 115, 22, 0.2); color: #fb923c; font-weight: 700;">New Perms</span>' : ''}
+                    ${app.dormant ? `<span style="font-size: 11px; padding: 2px 6px; border-radius: 4px; background: rgba(255,255,255,0.05); color: var(--text-muted);">${app.daysUnused}d unused</span>` : ''}
+                  </div>
+                </div>
+              </div>
+              <div style="font-size: 18px; font-weight: 800; color: ${app.score >= 75 ? 'var(--band-critical)' : (app.score >= 50 ? 'var(--band-high)' : 'var(--band-low)')};">
+                ${app.score}
+              </div>
+            </div>
+          `;
+        }
+      });
+
+      vp.innerHTML = html;
+    }
+
+    function renderAppDetail(vp) {
+      const app = appsData.find(a => a.id === selectedAppId) || appsData[1];
+      const isGp = currentMode === 'GRANDPARENT';
+      const isDet = currentMode === 'DETAILED';
+      const whyText = currentLang === 'HI' ? app.why_hi : app.why;
+
+      vp.innerHTML = `
+        <button class="btn-pill" style="align-self: flex-start; margin-bottom: 4px;" onclick="switchTab('apps')">← Back to Apps</button>
+
+        <!-- Header -->
+        <div class="card" style="display: flex; align-items: center; justify-content: space-between;">
+          <div style="display: flex; align-items: center; gap: 14px;">
+            <div style="width: 58px; height: 58px; border-radius: 16px; background: rgba(56, 189, 248, 0.2); display: flex; align-items: center; justify-content: center; font-size: 32px;">📱</div>
+            <div>
+              <div style="font-size: 20px; font-weight: 800;">${app.name}</div>
+              ${isDet ? `<div style="font-size: 12px; color: var(--text-muted); font-family: 'JetBrains Mono';">${app.pkg}</div>` : ''}
+              <div style="margin-top: 4px;"><span style="font-size: 12px; font-weight: 700; color: ${app.trustColor};">${app.trust}</span></div>
+            </div>
+          </div>
+          ${!isGp ? `<div style="font-size: 36px; font-weight: 900; color: var(--band-critical);">${app.score}</div>` : ''}
+        </div>
+
+        <!-- Safe to Keep Verdict -->
+        <div class="card" style="background: rgba(198, 40, 40, 0.15); border-left: 6px solid var(--band-high);">
+          <div style="font-size: 18px; font-weight: 800; color: var(--band-high);">${t('verdict_critical')}</div>
+          <div style="font-size: 14px; color: var(--text-main); margin-top: 4px;">${t('verdict_critical_desc')}</div>
+        </div>
+
+        ${!isGp ? `
+          <!-- 3x3 Capability Grid -->
+          <div style="font-size: 16px; font-weight: 700; margin-top: 6px;">Shadow Capability Grid (Tap to inspect)</div>
+          <div class="grid-3x3">
+            <div class="grid-cell" onclick="openGlossary('SPECIAL_ACCESS')">
+              <div class="cell-icon">🛡️</div>
+              <div class="cell-name">Special Access</div>
+              <div class="status-badge status-granted">GRANTED</div>
+            </div>
+            <div class="grid-cell" onclick="openGlossary('SMS')">
+              <div class="cell-icon">💬</div>
+              <div class="cell-name">SMS</div>
+              <div class="status-badge status-granted">GRANTED</div>
+            </div>
+            <div class="grid-cell" onclick="openGlossary('CAMERA')">
+              <div class="cell-icon">📷</div>
+              <div class="cell-name">Camera/Mic</div>
+              <div class="status-badge status-declared">DECLARED</div>
+            </div>
+            <div class="grid-cell"><div class="cell-icon">📍</div><div class="cell-name">Location</div><div class="status-badge status-none">NONE</div></div>
+            <div class="grid-cell"><div class="cell-icon">📇</div><div class="cell-name">Contacts</div><div class="status-badge status-none">NONE</div></div>
+            <div class="grid-cell"><div class="cell-icon">📞</div><div class="cell-name">Phone ID</div><div class="status-badge status-none">NONE</div></div>
+            <div class="grid-cell"><div class="cell-icon">📁</div><div class="cell-name">Storage</div><div class="status-badge status-granted">GRANTED</div></div>
+            <div class="grid-cell"><div class="cell-icon">🔄</div><div class="cell-name">Background</div><div class="status-badge status-granted">GRANTED</div></div>
+            <div class="grid-cell"><div class="cell-icon">🌐</div><div class="cell-name">Network</div><div class="status-badge status-granted">GRANTED</div></div>
+          </div>
+        ` : ''}
+
+        <!-- Why Flagged -->
+        <div class="card">
+          <div style="font-size: 16px; font-weight: 700; margin-bottom: 8px;">${t('what_app_can_do')}</div>
+          <div style="font-size: 15px; line-height: 1.5; color: var(--text-main);">• ${whyText}</div>
+        </div>
+
+        ${isDet ? `
+          <!-- Score Waterfall in Detailed Mode -->
+          <div class="card">
+            <div style="font-weight: 700; font-size: 16px; margin-bottom: 12px;">Score Waterfall (Deterministic)</div>
+            <div class="waterfall-row">
+              <div class="waterfall-header"><span>SMS granted</span><span style="color: var(--band-high);">+10</span></div>
+              <div class="bar-bg"><div class="bar-fill" style="width: 35%; background: var(--band-high);"></div></div>
+            </div>
+            <div class="waterfall-row">
+              <div class="waterfall-header"><span>Attack Chain: OTP Stealer</span><span style="color: var(--band-critical);">+15</span></div>
+              <div class="bar-bg"><div class="bar-fill" style="width: 50%; background: var(--band-critical);"></div></div>
+            </div>
+            <div class="waterfall-row">
+              <div class="waterfall-header"><span>Context Mismatch</span><span style="color: var(--band-critical);">+27</span></div>
+              <div class="bar-bg"><div class="bar-fill" style="width: 90%; background: var(--band-critical);"></div></div>
+            </div>
+            <div style="margin-top: 10px; font-size: 12px; color: var(--text-muted); font-family: 'JetBrains Mono';">Ref: MITRE ATT&CK T1412</div>
+          </div>
+        ` : ''}
+
+        <!-- Action Row -->
+        <div style="display: flex; gap: 10px;">
+          <button class="btn-primary" style="height: 52px; font-size: 16px;">Open App Settings</button>
+          <button class="btn-primary" style="height: 52px; font-size: 16px; background: rgba(239, 68, 68, 0.2); color: #f87171; border: 1px solid #ef4444;">Uninstall</button>
+        </div>
+      `;
+    }
+
+    function renderPanic(vp) {
+      vp.innerHTML = `
+        <div class="card" style="background: rgba(183, 28, 28, 0.2); border: 2px solid var(--panic-red); text-align: center; padding: 24px;">
+          <div style="font-size: 44px; margin-bottom: 8px;">🚨</div>
+          <div style="font-size: 20px; font-weight: 800; color: #fca5a5;">${t('panic_verdict')}</div>
+        </div>
+
+        <div style="font-weight: 700; font-size: 16px; margin-top: 8px;">Live Security Audit Results</div>
+
+        <div class="card" style="border-left: 4px solid var(--band-critical);">
+          <div style="font-weight: 700; font-size: 16px; color: #f87171;">1. Remote Control Apps Detected</div>
+          <div style="font-size: 14px; color: var(--text-muted); margin-top: 4px;">Found AnyDesk installed on device. High risk of remote screen takeover.</div>
+        </div>
+
+        <div class="card" style="border-left: 4px solid var(--band-critical);">
+          <div style="font-weight: 700; font-size: 16px; color: #f87171;">2. Active Fake Overlay Risk</div>
+          <div style="font-size: 14px; color: var(--text-muted); margin-top: 4px;">Quick Cleaner 2026 has accessibility + overlay permissions active.</div>
+        </div>
+
+        <div class="card" style="border-left: 4px solid #22c55e;">
+          <div style="font-weight: 700; font-size: 16px; color: #4ade80;">3. Sideloaded in last 24h</div>
+          <div style="font-size: 14px; color: var(--text-muted); margin-top: 4px;">Flashlight Pro was downloaded from web browser yesterday.</div>
+        </div>
+
+        <button class="btn-panic" onclick="alert('Shared emergency alert via WhatsApp!')">Share This Warning on WhatsApp</button>
+        <button class="btn-pill" style="height: 48px; width: 100%;" onclick="switchTab('home')">Return to Home</button>
+      `;
+    }
+
+    function renderDormant(vp) {
+      vp.innerHTML = `
+        <div class="card" style="background: rgba(230, 81, 0, 0.15); border-left: 6px solid var(--band-medium);">
+          <div style="font-size: 20px; font-weight: 800; color: #fb923c;">${t('dormant_title')}</div>
+          <div style="font-size: 14px; margin-top: 4px;">${t('dormant_sub')}</div>
+        </div>
+
+        <div class="card" style="display: flex; justify-content: space-between; align-items: center;">
+          <div>
+            <div style="font-weight: 700; font-size: 18px;">Old City Cabs</div>
+            <div style="font-size: 14px; color: var(--text-muted);">75 days unused • Holds Location & SMS</div>
+          </div>
+          <button class="btn-primary" style="height: 44px; width: auto; padding: 0 16px; font-size: 14px;">Clean Up</button>
+        </div>
+      `;
+    }
+
+    function renderAbout(vp) {
+      vp.innerHTML = `
+        <!-- Self-Audit Proof -->
+        <div class="card" style="background: rgba(46, 125, 50, 0.15); border: 1px solid var(--band-low);">
+          <div style="display: flex; justify-content: space-between; align-items: center;">
+            <div style="display: flex; align-items: center; gap: 10px;">
+              <span style="font-size: 28px;">🛡️</span>
+              <div>
+                <div style="font-weight: 800; font-size: 18px;">App-Anuman</div>
+                <div style="font-size: 13px; color: #4ade80; font-weight: 700;">${t('self_audit_title')}</div>
+              </div>
+            </div>
+            <span style="background: var(--band-low); color: #fff; font-size: 12px; font-weight: 700; padding: 3px 8px; border-radius: 6px;">LOW</span>
+          </div>
+          <div style="font-style: italic; font-size: 13px; color: var(--text-muted); margin-top: 10px;">${t('self_audit_quote')}</div>
+        </div>
+
+        <div class="card">
+          <div style="font-weight: 700; font-size: 16px;">🔑 Permissions We Use</div>
+          <div style="font-size: 14px; color: var(--text-muted); margin-top: 4px;">QUERY_ALL_PACKAGES to inventory apps, and PACKAGE_USAGE_STATS for dormant danger. Zero INTERNET permission.</div>
+        </div>
+
+        <div class="card">
+          <div style="font-weight: 700; font-size: 16px;">🌐 Data Sent Online</div>
+          <div style="font-size: 14px; color: var(--text-muted); margin-top: 4px;">Nothing. Ever. App-Anuman makes zero network calls and works 100% offline.</div>
+        </div>
+
+        <div class="card">
+          <div style="font-weight: 700; font-size: 16px;">🔒 Security Measures</div>
+          <div style="font-size: 14px; color: var(--text-muted); margin-top: 4px;">FLAG_SECURE active (blocks screenshots & recording), debuggable=false, allowBackup=false, EncryptedSharedPreferences.</div>
+        </div>
+      `;
+    }
+
+    function simulateScan() {
+      const vp = document.getElementById('viewport');
+      vp.innerHTML = `
+        <div style="text-align: center; padding: 60px 20px;">
+          <div style="font-size: 48px; animation: spin 1s infinite linear;">🔄</div>
+          <div style="font-size: 20px; font-weight: 700; margin-top: 16px;">Scanning installed apps on-device…</div>
+          <div style="font-size: 14px; color: var(--text-muted); margin-top: 8px;">Analyzing attack chains & permission creep</div>
+        </div>
+        <style>@keyframes spin { 100% { transform: rotate(360deg); } }</style>
+      `;
+      setTimeout(() => {
+        renderCurrentScreen();
+      }, 1200);
+    }
+
+    // Init
+    renderCurrentScreen();
+  </script>
+</body>
+</html>
