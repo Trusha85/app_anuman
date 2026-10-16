@@ -1,8 +1,9 @@
 package com.appanuman.features.panic
 
 import com.appanuman.data.model.AppRiskProfile
+import com.appanuman.data.model.AttackChainId
 import com.appanuman.data.model.InstallerTrust
-import com.appanuman.data.model.SpecialAccessState
+import com.appanuman.data.model.PermissionState
 
 enum class PanicVerdict {
     SAFE,
@@ -46,9 +47,9 @@ object PanicCheckEngine {
         // Check 2: Recent special access on new installs (< 48h)
         val recentSpecialAccessApps = apps.filter { app ->
             val installedWithin48h = (now - app.firstInstallTime) < 48L * 60 * 60 * 1000
-            val hasAccessibility = app.specialAccess.accessibilityEnabled == SpecialAccessState.ENABLED ||
-                    app.specialAccess.accessibilityEnabled == SpecialAccessState.GRANTED
-            val hasOverlay = app.specialAccess.overlayState == SpecialAccessState.GRANTED
+            val hasAccessibility = app.specialAccess.accessibilityEnabled == PermissionState.GRANTED
+            val hasOverlay = app.specialAccess.overlayState == PermissionState.GRANTED ||
+                    app.specialAccess.overlayState == PermissionState.DECLARED_ONLY
             installedWithin48h && (hasAccessibility || hasOverlay)
         }.map { it.label }
 
@@ -63,17 +64,19 @@ object PanicCheckEngine {
         // Check 4: Active screen control risk
         val activeOverlayRisk = apps.any { app ->
             app.threatNarratives.any { narrative ->
-                narrative.chainId == "OTP_STEALER" ||
-                        narrative.chainId == "OVERLAY_TRAP" ||
-                        narrative.chainId == "SILENT_SPY"
+                narrative.chainId == AttackChainId.OTP_STEALER ||
+                        narrative.chainId == AttackChainId.OVERLAY_TRAP ||
+                        narrative.chainId == AttackChainId.SILENT_SPY ||
+                        narrative.chainIdStr == "OTP_STEALER" ||
+                        narrative.chainIdStr == "OVERLAY_TRAP" ||
+                        narrative.chainIdStr == "SILENT_SPY"
             }
         }
 
         // Check 5: UPI fraud pattern
         val upiRiskApps = apps.filter { app ->
-            val smsGranted = app.grantedPermissions.any { it.contains("SMS", ignoreCase = true) }
-            val notifListener = app.specialAccess.notificationListenerEnabled == SpecialAccessState.ENABLED ||
-                    app.specialAccess.notificationListenerEnabled == SpecialAccessState.GRANTED
+            val smsGranted = app.grantedPermissions.any { it.permissionName.contains("SMS", ignoreCase = true) }
+            val notifListener = app.specialAccess.notificationListenerEnabled == PermissionState.GRANTED
             val lowerLabel = app.label.lowercase()
             val matchesFinance = UPI_KEYWORDS.any { lowerLabel.contains(it) }
             smsGranted && notifListener && matchesFinance

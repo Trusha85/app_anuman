@@ -302,20 +302,30 @@ object RiskScoringEngine {
         }
 
         return AppRiskProfile(
-            packageName = packageName,
             label = label,
+            packageName = packageName,
             targetSdkVersion = targetSdkVersion,
             installerTrust = installerTrust,
-            declaredPermissions = declaredPermissions,
-            grantedPermissions = grantedPermissions,
-            specialAccess = specialAccess,
-            daysUnused = daysUnused,
+            declaredPermissions = declaredPermissions.map {
+                PermissionInfo(it, PermissionCategory.SPECIAL_ACCESS, PermissionState.DECLARED_ONLY, 0)
+            },
+            grantedPermissions = grantedPermissions.map {
+                PermissionInfo(it, PermissionCategory.SPECIAL_ACCESS, PermissionState.GRANTED, 1)
+            },
+            specialAccess = SpecialAccessResult(
+                accessibilityEnabled = if (specialAccess.accessibilityEnabled == SpecialAccessState.ENABLED || specialAccess.accessibilityEnabled == SpecialAccessState.GRANTED) PermissionState.GRANTED else PermissionState.NOT_REQUESTED,
+                deviceAdminActive = if (specialAccess.deviceAdminActive == SpecialAccessState.ACTIVE || specialAccess.deviceAdminActive == SpecialAccessState.GRANTED) PermissionState.GRANTED else PermissionState.NOT_REQUESTED,
+                notificationListenerEnabled = if (specialAccess.notificationListenerEnabled == SpecialAccessState.ENABLED || specialAccess.notificationListenerEnabled == SpecialAccessState.GRANTED) PermissionState.GRANTED else PermissionState.NOT_REQUESTED,
+                overlayState = if (specialAccess.overlayState == SpecialAccessState.GRANTED) PermissionState.GRANTED else PermissionState.NOT_REQUESTED,
+                installPackagesState = if (specialAccess.installPackagesState == SpecialAccessState.GRANTED) PermissionState.GRANTED else PermissionState.NOT_REQUESTED
+            ),
+            daysUnused = daysUnused.toInt(),
             isDormant = isDormant,
             permissionCreepFlag = permissionCreepFlag,
             addedPermissions = addedPermissions,
-            score = finalScore,
+            riskScore = finalScore,
             riskBand = riskBand,
-            waterfall = waterfall,
+            scoringFindings = waterfall,
             threatNarratives = narratives,
             contextMismatch = contextMismatch,
             mismatchSeverity = mismatchSeverity

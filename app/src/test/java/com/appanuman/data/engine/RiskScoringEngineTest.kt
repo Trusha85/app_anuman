@@ -71,7 +71,7 @@ class RiskScoringEngineTest {
         // Total = 32
         assertEquals(32, app.score)
         assertEquals(RiskBand.MEDIUM, app.riskBand)
-        assertTrue(app.threatNarratives.any { it.chainId == "OTP_STEALER" })
+        assertTrue(app.threatNarratives.any { it.chainIdStr == "OTP_STEALER" })
     }
 
     @Test

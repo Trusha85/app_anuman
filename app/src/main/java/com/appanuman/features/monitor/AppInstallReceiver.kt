@@ -87,7 +87,7 @@ class AppInstallReceiver : BroadcastReceiver() {
         val title = context.getString(R.string.notif_flagged_title, profile.label)
         val body = if (isSideloadedNotice) {
             val topCategory = profile.grantedPermissions.firstOrNull()?.let {
-                AppInventoryCollector.mapPermissionToCategory(it).name
+                AppInventoryCollector.mapPermissionToCategory(it.permissionName).name
             } ?: "special"
             context.getString(R.string.notif_sideloaded_body, topCategory)
         } else {

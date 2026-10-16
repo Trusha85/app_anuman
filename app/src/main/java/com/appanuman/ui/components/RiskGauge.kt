@@ -65,7 +65,7 @@ fun RiskGauge(
 
         // Center typography: grade letter 48sp bold, outer score 24sp
         Column(
-            horizontalAlignment = Alignment.CenterVertically,
+            horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
             Text(

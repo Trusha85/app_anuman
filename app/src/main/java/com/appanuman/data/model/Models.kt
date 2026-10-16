@@ -140,6 +140,37 @@ data class AppRiskProfile(
 ) {
     val score: Int get() = riskScore
     val waterfall: List<ScoringFinding> get() = scoringFindings
+
+    constructor(
+        packageName: String,
+        label: String,
+        firstInstallTime: Long = 0L,
+        installerTrust: InstallerTrust = InstallerTrust.UNKNOWN,
+        grantedPermissions: List<String> = emptyList(),
+        specialAccess: SpecialAccessInfo = SpecialAccessInfo(),
+        threatNarratives: List<ThreatNarrative> = emptyList()
+    ) : this(
+        label = label,
+        packageName = packageName,
+        firstInstallTime = firstInstallTime,
+        installerTrust = installerTrust,
+        grantedPermissions = grantedPermissions.map {
+            PermissionInfo(
+                permissionName = it,
+                category = PermissionCategory.SPECIAL_ACCESS,
+                state = PermissionState.GRANTED,
+                protectionLevel = 1
+            )
+        },
+        specialAccess = SpecialAccessResult(
+            accessibilityEnabled = if (specialAccess.accessibilityEnabled == SpecialAccessState.ENABLED || specialAccess.accessibilityEnabled == SpecialAccessState.GRANTED) PermissionState.GRANTED else PermissionState.NOT_REQUESTED,
+            deviceAdminActive = if (specialAccess.deviceAdminActive == SpecialAccessState.ACTIVE || specialAccess.deviceAdminActive == SpecialAccessState.GRANTED) PermissionState.GRANTED else PermissionState.NOT_REQUESTED,
+            notificationListenerEnabled = if (specialAccess.notificationListenerEnabled == SpecialAccessState.ENABLED || specialAccess.notificationListenerEnabled == SpecialAccessState.GRANTED) PermissionState.GRANTED else PermissionState.NOT_REQUESTED,
+            overlayState = if (specialAccess.overlayState == SpecialAccessState.GRANTED) PermissionState.GRANTED else PermissionState.NOT_REQUESTED,
+            installPackagesState = if (specialAccess.installPackagesState == SpecialAccessState.GRANTED) PermissionState.GRANTED else PermissionState.NOT_REQUESTED
+        ),
+        threatNarratives = threatNarratives
+    )
 }
 
 data class DeviceRiskSummary(

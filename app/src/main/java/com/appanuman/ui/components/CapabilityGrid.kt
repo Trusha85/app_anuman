@@ -109,7 +109,7 @@ private fun CapabilityCell(
             modifier = Modifier
                 .padding(8.dp)
                 .fillMaxSize(),
-            horizontalAlignment = Alignment.CenterVertically,
+            horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.SpaceBetween
         ) {
             Icon(
