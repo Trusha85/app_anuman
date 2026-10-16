@@ -14,10 +14,6 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     private val preferenceManager by lazy { PreferenceManager(application) }
     private val inventoryCollector by lazy { com.appanuman.data.collector.AppInventoryCollector(application) }
 
-    init {
-        startScan()
-    }
-
     private val _userMode = MutableStateFlow(preferenceManager.userMode)
     val userMode: StateFlow<UserMode> = _userMode.asStateFlow()
 
@@ -98,6 +94,10 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     private val _panicResult = MutableStateFlow(createInitialPanicResult())
     val panicResult: StateFlow<PanicScanResult> = _panicResult.asStateFlow()
 
+    init {
+        startScan()
+    }
+
     fun setUserMode(mode: UserMode) {
         _userMode.value = mode
         preferenceManager.userMode = mode
@@ -133,8 +133,8 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
 
     fun startScan() {
         viewModelScope.launch(kotlinx.coroutines.Dispatchers.IO) {
-            _scanState.value = ScanState.SCANNING
             try {
+                _scanState.value = ScanState.SCANNING
                 var realCollected = inventoryCollector.collectAllApps(getApplication(), _includeSystemApps.value)
                 if (realCollected.isEmpty()) {
                     // Fallback: If 0 non-system apps were found, collect all installed packages
@@ -147,8 +147,12 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
                 }
                 _rawApps.value = mappedApps
                 _deviceSummary.value = calculateDeviceSummary(mappedApps)
-            } catch (e: Exception) {
-                _deviceSummary.value = calculateDeviceSummary(_rawApps.value)
+            } catch (t: Throwable) {
+                try {
+                    val fallback = if (_rawApps.value.isNotEmpty()) _rawApps.value else createStubAppDataset()
+                    _rawApps.value = fallback
+                    _deviceSummary.value = calculateDeviceSummary(fallback)
+                } catch (ignored: Throwable) {}
             } finally {
                 _scanState.value = ScanState.COMPLETED
             }

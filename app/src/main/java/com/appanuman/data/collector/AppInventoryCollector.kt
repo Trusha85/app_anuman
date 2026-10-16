@@ -128,7 +128,7 @@ class AppInventoryCollector(
                 val fullAppInfo = fullPkgInfo.applicationInfo ?: appInfo
                 val profile = buildAppProfile(pm, fullPkgInfo, fullAppInfo, usageMap)
                 resultList.add(profile)
-            } catch (e: Exception) {
+            } catch (t: Throwable) {
                 // Defensive: never crash scanning on a single malformed app
             }
         }
@@ -147,7 +147,7 @@ class AppInventoryCollector(
                     val fullAppInfo = fullPkgInfo.applicationInfo ?: appInfo
                     val profile = buildAppProfile(pm, fullPkgInfo, fullAppInfo, usageMap)
                     resultList.add(profile)
-                } catch (e: Exception) {
+                } catch (t: Throwable) {
                 }
             }
         }
@@ -266,13 +266,8 @@ class AppInventoryCollector(
         // Context mismatch
         val contextMismatch = RiskScoringEngine.checkContextMismatch(label, grantedPermissions)
 
-        // Icon conversion
-        val iconBitmap = try {
-            val drawable = pm.getApplicationIcon(packageName)
-            drawableToBitmap(drawable)
-        } catch (e: Exception) {
-            null
-        }
+        // Icon conversion (UI uses vector icon, avoid heavy IPC and OOM)
+        val iconBitmap: Bitmap? = null
 
         // Build temporary profile to run scoring engine
         val draftProfile = AppRiskProfile(

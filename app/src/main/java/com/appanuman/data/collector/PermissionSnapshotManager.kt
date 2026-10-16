@@ -22,7 +22,10 @@ class PermissionSnapshotManager(private val context: Context) {
                 EncryptedSharedPreferences.PrefKeyEncryptionScheme.AES256_SIV,
                 EncryptedSharedPreferences.PrefValueEncryptionScheme.AES256_GCM
             )
-        } catch (e: Exception) {
+        } catch (t: Throwable) {
+            try {
+                context.deleteSharedPreferences("appanuman_perm_snapshots")
+            } catch (ignored: Throwable) {}
             context.getSharedPreferences("appanuman_perm_snapshots_fallback", Context.MODE_PRIVATE)
         }
     }
@@ -38,7 +41,7 @@ class PermissionSnapshotManager(private val context: Context) {
     ): Pair<Boolean, List<String>> {
         return try {
             val key = "snap_$packageName"
-            val previousJson = prefs.getString(key, null)
+            val previousJson = try { prefs.getString(key, null) } catch (t: Throwable) { null }
             val currentSet = currentDeclaredPermissions.toSet()
 
             if (previousJson == null) {
@@ -53,7 +56,7 @@ class PermissionSnapshotManager(private val context: Context) {
                 val hasCreep = addedPermissions.isNotEmpty()
                 Pair(hasCreep, addedPermissions)
             }
-        } catch (e: Exception) {
+        } catch (t: Throwable) {
             Pair(false, emptyList())
         }
     }

@@ -21,8 +21,12 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        // Window Security: Prevents screenshots and screen recording of sensitive scan results
-        window.addFlags(WindowManager.LayoutParams.FLAG_SECURE)
+        try {
+            // Window Security: Prevents screenshots and screen recording of sensitive scan results
+            window.addFlags(WindowManager.LayoutParams.FLAG_SECURE)
+        } catch (t: Throwable) {
+            android.util.Log.e("MainActivity", "Error applying FLAG_SECURE", t)
+        }
 
         setContent {
             val userMode by viewModel.userMode.collectAsStateWithLifecycle()
