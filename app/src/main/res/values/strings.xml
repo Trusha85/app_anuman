@@ -1,0 +1,215 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">App-Anuman</string>
+    <string name="app_tagline">On-Device App Risk Auditor</string>
+    <string name="lang_toggle">हिं</string>
+    <string name="lang_current">EN</string>
+
+    <!-- Navigation -->
+    <string name="nav_home">Home</string>
+    <string name="nav_apps">Apps</string>
+    <string name="nav_dormant">Dormant</string>
+    <string name="nav_about">About</string>
+
+    <!-- User Modes -->
+    <string name="mode_selector_title">Select Presentation Mode</string>
+    <string name="mode_simple_title">Simple Mode (Default)</string>
+    <string name="mode_simple_desc">Plain language, everyday analogies, no technical jargon</string>
+    <string name="mode_detailed_title">Detailed Mode</string>
+    <string name="mode_detailed_desc">Full technical metrics, MITRE ATT&amp;CK refs, and rule IDs</string>
+    <string name="mode_grandparent_title">Grandparent Mode</string>
+    <string name="mode_grandparent_desc">Extra-large text, 3 simple colors, and one-tap family help</string>
+
+    <!-- Home Screen -->
+    <string name="home_question_otp_title">Who can read my OTPs?</string>
+    <string name="home_question_otp_subtitle">%1$d apps have SMS and Internet access</string>
+    <string name="home_question_background_title">Who can watch me in the background?</string>
+    <string name="home_question_background_subtitle">%1$d apps have Camera/Mic and Background access</string>
+    <string name="home_question_screen_title">Who can control my screen?</string>
+    <string name="home_question_screen_subtitle">%1$d apps have Accessibility or Overlay enabled</string>
+
+    <string name="home_device_grade_title">Device Risk Grade</string>
+    <string name="home_scan_now">Scan Now</string>
+    <string name="home_scanning">Scanning installed apps…</string>
+    <string name="home_scanned_stats">Scanned %1$d apps in %2$.1fs — fully on-device</string>
+    <string name="home_tap_to_scan">Tap to scan your installed apps</string>
+    <string name="home_last_scan">Last scan: %1$s</string>
+    <string name="home_panic_button">Am I Being Scammed?</string>
+
+    <!-- Grandparent Mode Home -->
+    <string name="gp_home_question">Is Your Phone Safe?</string>
+    <string name="gp_status_safe">Your phone looks safe</string>
+    <string name="gp_status_medium">Worth checking a few things</string>
+    <string name="gp_status_high">Needs your attention</string>
+    <string name="gp_status_critical">Act immediately</string>
+
+    <!-- App List Screen -->
+    <string name="list_title">Installed Apps</string>
+    <string name="list_search_hint">Search apps by name…</string>
+    <string name="list_filter_all">All</string>
+    <string name="list_filter_critical">Critical</string>
+    <string name="list_filter_high">High</string>
+    <string name="list_filter_dormant">Dormant</string>
+    <string name="list_filter_sideloaded">Sideloaded</string>
+    <string name="list_filter_mismatch">Mismatch</string>
+    <string name="list_filter_creep">New Perms</string>
+    <string name="list_sort_label">Sort by</string>
+    <string name="list_sort_risk">Risk Score</string>
+    <string name="list_sort_name">Name</string>
+    <string name="list_sort_date">Install Date</string>
+    <string name="list_sort_dormant">Days Unused</string>
+    <string name="list_system_apps_toggle">Include System Apps</string>
+    <string name="list_empty">No applications found matching your criteria</string>
+
+    <!-- Trust Badges -->
+    <string name="trust_verified">Play Store</string>
+    <string name="trust_system">System Install</string>
+    <string name="trust_preinstalled">Pre-installed</string>
+    <string name="trust_sideloaded">Sideloaded ⚠️</string>
+    <string name="trust_unknown">Unknown Source</string>
+
+    <!-- Risk Bands -->
+    <string name="band_low">LOW</string>
+    <string name="band_medium">MEDIUM</string>
+    <string name="band_high">HIGH</string>
+    <string name="band_critical">CRITICAL</string>
+
+    <!-- App Detail Screen -->
+    <string name="detail_title">App Risk Profile</string>
+    <string name="detail_installed_on">Installed: %1$s</string>
+    <string name="detail_updated_on">Updated: %1$s</string>
+    <string name="detail_target_sdk_warning">⚠️ Targets SDK %1$d (Bypasses modern Android security protections)</string>
+
+    <!-- Safe to Keep Verdicts -->
+    <string name="verdict_safe_title">✅ Looks Safe</string>
+    <string name="verdict_safe_desc">This app requests reasonable permissions and shows no harmful combinations.</string>
+    <string name="verdict_checking_title">⚠️ Worth Checking</string>
+    <string name="verdict_checking_desc">This app has moderate access. Verify if you truly use all its requested capabilities.</string>
+    <string name="verdict_attention_title">🔶 Needs Attention</string>
+    <string name="verdict_attention_desc">This app holds sensitive access or unusual background capabilities. Review carefully.</string>
+    <string name="verdict_act_now_title">🚨 Act Now</string>
+    <string name="verdict_act_now_desc">Multiple high-risk capabilities detected. Recommend removing or restricting access immediately.</string>
+
+    <!-- Capability Grid (9 Categories) -->
+    <string name="cat_special_access">Special Access</string>
+    <string name="cat_sms">SMS Messages</string>
+    <string name="cat_contacts_calls">Contacts &amp; Calls</string>
+    <string name="cat_camera_mic">Camera &amp; Mic</string>
+    <string name="cat_location">Location</string>
+    <string name="cat_phone_identity">Phone Identity</string>
+    <string name="cat_storage">Storage &amp; Files</string>
+    <string name="cat_background">Background Access</string>
+    <string name="cat_network">Network &amp; Internet</string>
+
+    <!-- Category Statuses -->
+    <string name="status_granted">Granted</string>
+    <string name="status_declared_only">Declared Only</string>
+    <string name="status_not_requested">None</string>
+    <string name="status_unable_to_check">Unable to Check</string>
+
+    <!-- Category Analogies -->
+    <string name="analogy_special_access">Like giving a stranger your phone\'s eyes and hands.</string>
+    <string name="analogy_sms">Like letting someone open all your bank letters.</string>
+    <string name="analogy_contacts_calls">Like sharing your entire address book with a stranger.</string>
+    <string name="analogy_camera_mic">Like letting someone turn on your camera anytime.</string>
+    <string name="analogy_location">Like someone always knowing exactly where you are.</string>
+    <string name="analogy_phone_identity">Like someone knowing your phone number and ID.</string>
+    <string name="analogy_storage">Like letting someone read all your photos and files.</string>
+    <string name="analogy_background">Like someone who stays in your house even when you leave.</string>
+    <string name="analogy_network">Like having an open letter box anyone can post from.</string>
+
+    <!-- Permission Glossary Sheet -->
+    <string name="glossary_title">Permission Details</string>
+    <string name="glossary_analogy_header">Plain Analogy</string>
+    <string name="glossary_status_header">Status on your phone</string>
+    <string name="glossary_declared_permissions">Individual Permissions Requested</string>
+    <string name="glossary_close">Close</string>
+
+    <!-- Score Waterfall -->
+    <string name="waterfall_title">How the score was calculated</string>
+    <string name="waterfall_toggle_show">Show Calculation Details ▼</string>
+    <string name="waterfall_toggle_hide">Hide Calculation Details ▲</string>
+    <string name="waterfall_total">Total Calculated Score: %1$d/100</string>
+
+    <!-- Threat Narratives -->
+    <string name="threat_patterns_title">Risk Patterns Detected</string>
+    <string name="mitre_ref">Ref: MITRE %1$s</string>
+
+    <!-- Why Flagged Section -->
+    <string name="why_flagged_title">Why This App Was Flagged</string>
+    <string name="what_app_can_do_title">What this app can do</string>
+
+    <!-- Alerts -->
+    <string name="creep_alert_title">⚠️ Permission Creep Detected</string>
+    <string name="creep_alert_desc">Updated %1$d days ago — secretly added sensitive permissions: %2$s</string>
+    <string name="dormant_alert_title">💤 Dormant App Risk</string>
+    <string name="dormant_alert_desc">Unused for %1$d days — still holds sensitive access (%2$s)</string>
+    <string name="dormant_review_action">Review Access</string>
+    <string name="context_mismatch_badge">Mismatch</string>
+    <string name="context_mismatch_desc">Utility app (like torch or calculator) holding sensitive personal permissions.</string>
+
+    <!-- Detail Actions -->
+    <string name="action_open_settings">Open App Settings</string>
+    <string name="action_uninstall">Uninstall App</string>
+    <string name="action_get_help">Get Help With This App</string>
+    <string name="help_share_message">I need help checking this app on my phone: %1$s. A security app flagged it. Can you look at it for me?</string>
+
+    <!-- Scan Coverage Footer -->
+    <string name="coverage_title">Scan Coverage &amp; Verifications</string>
+    <string name="coverage_accessibility">Accessibility Services: Checked</string>
+    <string name="coverage_admin">Device Admin Rights: Checked</string>
+    <string name="coverage_overlay">Screen Overlay: Declared only (live state restricted)</string>
+    <string name="coverage_listeners">Notification Listeners: Checked</string>
+
+    <!-- Panic Screen -->
+    <string name="panic_title">Panic Audit: Am I Being Scammed?</string>
+    <string name="panic_subtitle">Real-time scan for remote control, active traps, and recent threats</string>
+    <string name="panic_running">Auditing device state in real-time…</string>
+    <string name="panic_check_remote">1. Checking for remote control / screen share apps</string>
+    <string name="panic_check_recent_access">2. Checking recently installed apps with accessibility/overlay</string>
+    <string name="panic_check_sideloaded">3. Checking apps sideloaded within last 24 hours</string>
+    <string name="panic_check_overlay">4. Checking active screen overlay and input traps</string>
+    <string name="panic_check_upi">5. Checking SMS &amp; notification fraud against banking apps</string>
+
+    <string name="panic_verdict_safe">🟢 No active scam indicators detected</string>
+    <string name="panic_verdict_concern">🟡 One concern found — review below</string>
+    <string name="panic_verdict_warning">🔴 WARNING: Possible scam activity — act now</string>
+    <string name="panic_share_action">Share This Warning</string>
+    <string name="panic_share_safe_msg">App-Anuman Panic Audit Result: No active scam tools or remote access apps were detected on my phone.</string>
+    <string name="panic_share_warning_msg">⚠️ App-Anuman Scam Alert: My phone flagged potential scam or screen control activity! Details: %1$s</string>
+
+    <!-- Dormant Danger Screen -->
+    <string name="dormant_screen_title">Dormant Danger</string>
+    <string name="dormant_summary_card">%1$d apps have had sensitive access for 30+ days without being opened.</string>
+    <string name="dormant_days_unused">%1$d days unused</string>
+    <string name="dormant_danger_perms">%1$d sensitive permissions</string>
+    <string name="dormant_cleanup_button">Clean Up</string>
+    <string name="dormant_empty">No dormant apps with dangerous permissions found!</string>
+
+    <!-- Share Screen -->
+    <string name="share_screen_title">Share Security Report</string>
+    <string name="share_card_header">Family Report Preview</string>
+    <string name="share_privacy_note">🔒 Only the summary above will be shared. Your full scan data stays securely on your phone.</string>
+    <string name="share_button_label">Share via WhatsApp / Messages</string>
+
+    <!-- About Screen -->
+    <string name="about_title">About App-Anuman Security</string>
+    <string name="about_quote">“An app that audits security must pass its own audit.”</string>
+    <string name="about_self_score">Self-Audit Score: %1$d/100 (LOW Band ✅)</string>
+    <string name="about_self_desc">App-Anuman appears in its own audit results and scores below 10 with 0 dangerous permissions.</string>
+
+    <string name="about_perms_title">Permissions We Use</string>
+    <string name="about_perms_desc">QUERY_ALL_PACKAGES to inventory installed apps, and PACKAGE_USAGE_STATS to detect dormant threats. Zero INTERNET permission.</string>
+
+    <string name="about_storage_title">Data Stored on Device</string>
+    <string name="about_storage_desc">Language and mode preferences, plus encrypted permission snapshots for update creep detection. All scan data is in-memory only.</string>
+
+    <string name="about_online_title">Data Sent Online</string>
+    <string name="about_online_desc">Nothing. Ever. App-Anuman contains zero network libraries and makes zero outbound connections.</string>
+
+    <string name="about_security_title">Security Hardening</string>
+    <string name="about_security_desc">FLAG_SECURE active (prevents screenshots/screen recordings), debuggable=false, allowBackup=false, cleartextTrafficPermitted=false.</string>
+
+    <string name="about_version_title">Engine &amp; Build</string>
+    <string name="about_version_desc">Scan Engine v1.0.0-offline • Signed Release Build</string>
+</resources>
